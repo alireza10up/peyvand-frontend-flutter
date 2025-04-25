@@ -262,7 +262,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         children: [
           _buildActionButton(
             icon: _isLiked ? Icons.thumb_up : Icons.thumb_up_outlined,
-            label: 'پسندیدن',
+            label: '',
             color: _isLiked ? AppTheme.primaryColor : null,
             onTap: () {
               setState(() {
@@ -273,7 +273,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
           _buildActionButton(
             icon: Icons.comment_outlined,
-            label: 'نظر',
+            label: '',
             onTap: () {
               // Focus on comment input
               FocusScope.of(context).requestFocus(FocusNode());
@@ -284,10 +284,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
           _buildActionButton(
             icon: Icons.share_outlined,
-            label: 'اشتراک‌گذاری',
             onTap: () {
               // Share post
-            },
+            }, label: '',
           ),
           AiEnhanceButton(
             onTap: () {

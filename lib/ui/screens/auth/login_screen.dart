@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peyvand/config/app_assets.dart';
 import 'package:peyvand/config/app_theme.dart';
 import 'package:peyvand/config/routes.dart';
 import 'package:peyvand/ui/widgets/common/custom_button.dart';
@@ -58,11 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: AppTheme.primaryColor,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.link,
-                    size: 50,
-                    color: Colors.white,
-                  ),
+                  child: AppAssets.logoLarge(),
                 ),
                 SizedBox(height: 24),
                 // App name
