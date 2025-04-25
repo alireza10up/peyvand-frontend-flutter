@@ -70,7 +70,7 @@ class ProfileHeader extends StatelessWidget {
               ),
               SizedBox(width: 4),
               Text(
-                '${userData['connections']} connections',
+                '${userData['connections']} ارتباط',
                 style: TextStyle(
                   color: AppTheme.lightTextColor,
                 ),

@@ -10,50 +10,50 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  String _chatPartnerName = 'Sarah Johnson';
+  String _chatPartnerName = 'سارا جانسون';
   bool _isTyping = false;
 
   final List<Map<String, dynamic>> _messages = [
     {
       'id': '1',
-      'text': 'Hi there! How are you doing today?',
+      'text': 'سلام! حال شما چطور است؟',
       'isMe': false,
-      'time': '10:30 AM',
+      'time': '10:30',
       'status': 'read',
     },
     {
       'id': '2',
-      'text': 'I\'m doing great! Just finished a new feature for our app.',
+      'text': 'من عالی هستم! همین الان یک ویژگی جدید برای اپ ما تمام کردم.',
       'isMe': true,
-      'time': '10:32 AM',
+      'time': '10:32',
       'status': 'read',
     },
     {
       'id': '3',
-      'text': 'That\'s awesome! What feature did you implement?',
+      'text': 'عالیه! چه ویژگی‌ای پیاده‌سازی کردی؟',
       'isMe': false,
-      'time': '10:33 AM',
+      'time': '10:33',
       'status': 'read',
     },
     {
       'id': '4',
-      'text': 'I added an AI-powered recommendation system that suggests relevant connections based on user skills and interests.',
+      'text': 'یک سیستم پیشنهاددهنده مبتنی بر هوش مصنوعی اضافه کردم که بر اساس مهارت‌ها و علایق کاربران، ارتباطات مرتبط را پیشنهاد می‌دهد.',
       'isMe': true,
-      'time': '10:35 AM',
+      'time': '10:35',
       'status': 'read',
     },
     {
       'id': '5',
-      'text': 'Wow, that sounds impressive! Would love to see it in action sometime.',
+      'text': 'واو، خیلی جالب به نظر می‌رسد! دوست دارم آن را در عمل ببینم.',
       'isMe': false,
-      'time': '10:36 AM',
+      'time': '10:36',
       'status': 'read',
     },
     {
       'id': '6',
-      'text': 'Thanks for sharing that article about machine learning applications in social networks. It was really insightful!',
+      'text': 'ممنون از اشتراک‌گذاری آن مقاله درباره کاربردهای یادگیری ماشین در شبکه‌های اجتماعی. واقعاً بینش‌دهنده بود!',
       'isMe': false,
-      'time': '11:20 AM',
+      'time': '11:20',
       'status': 'read',
     },
   ];
@@ -99,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
       Future.delayed(Duration(seconds: 3), () {
         final replyMessage = {
           'id': DateTime.now().millisecondsSinceEpoch.toString(),
-          'text': 'Thanks for your message! I\'ll look into this and get back to you soon.',
+          'text': 'ممنون از پیام شما! من این موضوع را بررسی می‌کنم و به زودی پاسخ می‌دهم.',
           'isMe': false,
           'time': '${DateTime.now().hour}:${DateTime.now().minute}',
           'status': 'sent',
@@ -159,7 +159,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 Text(
-                  _isTyping ? 'typing...' : 'Online',
+                  _isTyping ? 'در حال تایپ...' : 'آنلاین',
                   style: TextStyle(
                     color: _isTyping ? AppTheme.primaryColor : Colors.green,
                     fontSize: 12,
@@ -228,7 +228,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    'Sarah is typing...',
+                    'سارا در حال تایپ است...',
                     style: TextStyle(
                       color: AppTheme.lightTextColor,
                       fontStyle: FontStyle.italic,
@@ -261,7 +261,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: TextField(
                     controller: _messageController,
                     decoration: InputDecoration(
-                      hintText: 'Type a message...',
+                      hintText: 'پیامی بنویسید...',
                       hintStyle: TextStyle(color: AppTheme.lightTextColor),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),

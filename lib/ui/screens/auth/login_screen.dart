@@ -67,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 24),
                 // App name
                 Text(
-                  'Peyvand',
+                  'پیوند',
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                     color: AppTheme.primaryColor,
                     fontWeight: FontWeight.bold,
@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Connect, Share, and Grow with AI',
+                  'ارتباط، اشتراک‌گذاری و رشد با هوش مصنوعی',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppTheme.lightTextColor,
                   ),
@@ -83,17 +83,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 40),
                 // Email field
                 CustomTextField(
-                  label: 'Email',
-                  hintText: 'Enter your email',
+                  label: 'ایمیل',
+                  hintText: 'ایمیل خود را وارد کنید',
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return 'لطفا ایمیل خود را وارد کنید';
                     }
                     if (!value.contains('@')) {
-                      return 'Please enter a valid email';
+                      return 'لطفا یک ایمیل معتبر وارد کنید';
                     }
                     return null;
                   },
@@ -101,17 +101,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 20),
                 // Password field
                 CustomTextField(
-                  label: 'Password',
-                  hintText: 'Enter your password',
+                  label: 'رمز عبور',
+                  hintText: 'رمز عبور خود را وارد کنید',
                   controller: _passwordController,
                   isPassword: true,
                   prefixIcon: Icons.lock_outline,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
+                      return 'لطفا رمز عبور خود را وارد کنید';
                     }
                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                      return 'رمز عبور باید حداقل ۶ کاراکتر باشد';
                     }
                     return null;
                   },
@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.pushNamed(context, Routes.forgotPassword);
                     },
                     child: Text(
-                      'Forgot Password?',
+                      'رمز عبور را فراموش کرده‌اید؟',
                       style: TextStyle(
                         color: AppTheme.primaryColor,
                         fontWeight: FontWeight.w500,
@@ -136,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 24),
                 // Login button
                 CustomButton(
-                  text: 'Login',
+                  text: 'ورود',
                   isLoading: _isLoading,
                   onPressed: _login,
                 ),
@@ -145,14 +145,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account?"),
+                    Text("حساب کاربری ندارید؟"),
                     SizedBox(width: 4),
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, Routes.register);
                       },
                       child: Text(
-                        'Register',
+                        'ثبت نام',
                         style: TextStyle(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.bold,
@@ -164,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 40),
                 // Social login
                 Text(
-                  'Or continue with',
+                  'یا ورود با',
                   style: TextStyle(color: AppTheme.lightTextColor),
                 ),
                 SizedBox(height: 16),

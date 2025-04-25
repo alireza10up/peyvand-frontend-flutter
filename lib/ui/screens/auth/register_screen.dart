@@ -59,14 +59,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Create Account',
+                  'ایجاد حساب کاربری',
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Join our professional community',
+                  'به جامعه حرفه‌ای ما بپیوندید',
                   style: TextStyle(
                     color: AppTheme.lightTextColor,
                     fontSize: 16,
@@ -75,13 +75,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: 32),
                 // Name field
                 CustomTextField(
-                  label: 'Full Name',
-                  hintText: 'Enter your full name',
+                  label: 'نام و نام خانوادگی',
+                  hintText: 'نام و نام خانوادگی خود را وارد کنید',
                   controller: _nameController,
                   prefixIcon: Icons.person_outline,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
+                      return 'لطفا نام خود را وارد کنید';
                     }
                     return null;
                   },
@@ -89,17 +89,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: 20),
                 // Email field
                 CustomTextField(
-                  label: 'Email',
-                  hintText: 'Enter your email',
+                  label: 'ایمیل',
+                  hintText: 'ایمیل خود را وارد کنید',
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return 'لطفا ایمیل خود را وارد کنید';
                     }
                     if (!value.contains('@')) {
-                      return 'Please enter a valid email';
+                      return 'لطفا یک ایمیل معتبر وارد کنید';
                     }
                     return null;
                   },
@@ -107,17 +107,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: 20),
                 // Password field
                 CustomTextField(
-                  label: 'Password',
-                  hintText: 'Create a password',
+                  label: 'رمز عبور',
+                  hintText: 'یک رمز عبور ایجاد کنید',
                   controller: _passwordController,
                   isPassword: true,
                   prefixIcon: Icons.lock_outline,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
+                      return 'لطفا رمز عبور را وارد کنید';
                     }
                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                      return 'رمز عبور باید حداقل ۶ کاراکتر باشد';
                     }
                     return null;
                   },
@@ -125,17 +125,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: 20),
                 // Confirm Password field
                 CustomTextField(
-                  label: 'Confirm Password',
-                  hintText: 'Confirm your password',
+                  label: 'تایید رمز عبور',
+                  hintText: 'رمز عبور خود را تایید کنید',
                   controller: _confirmPasswordController,
                   isPassword: true,
                   prefixIcon: Icons.lock_outline,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
+                      return 'لطفا رمز عبور خود را تایید کنید';
                     }
                     if (value != _passwordController.text) {
-                      return 'Passwords do not match';
+                      return 'رمزهای عبور مطابقت ندارند';
                     }
                     return null;
                   },
@@ -152,7 +152,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'By signing up, you agree to our Terms of Service and Privacy Policy',
+                        'با ثبت نام، شما با قوانین استفاده از خدمات و سیاست حفظ حریم خصوصی ما موافقت می‌کنید',
                         style: TextStyle(
                           fontSize: 12,
                           color: AppTheme.lightTextColor,
@@ -164,7 +164,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: 24),
                 // Register button
                 CustomButton(
-                  text: 'Create Account',
+                  text: 'ایجاد حساب کاربری',
                   isLoading: _isLoading,
                   onPressed: _register,
                 ),
@@ -173,14 +173,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Already have an account?"),
+                    Text("قبلاً حساب کاربری دارید؟"),
                     SizedBox(width: 4),
                     GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        'Login',
+                        'ورود',
                         style: TextStyle(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.bold,

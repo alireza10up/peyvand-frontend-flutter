@@ -111,11 +111,11 @@ class PostCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              _actionButton(Icons.thumb_up_outlined, 'Like'),
+              _actionButton(Icons.thumb_up_outlined, 'پسندیدن'),
               SizedBox(width: 16),
-              _actionButton(Icons.comment_outlined, 'Comment'),
+              _actionButton(Icons.comment_outlined, 'نظر'),
               SizedBox(width: 16),
-              _actionButton(Icons.share_outlined, 'Share'),
+              _actionButton(Icons.share_outlined, 'اشتراک‌گذاری'),
             ],
           ),
           AiEnhanceButton(
@@ -151,14 +151,14 @@ class PostCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            '${post['likes']} likes',
+            '${post['likes']} پسند',
             style: TextStyle(
               fontSize: 12,
               color: AppTheme.lightTextColor,
             ),
           ),
           Text(
-            '${post['comments']} comments',
+            '${post['comments']} نظر',
             style: TextStyle(
               fontSize: 12,
               color: AppTheme.lightTextColor,
@@ -178,7 +178,7 @@ class PostCard extends StatelessWidget {
             radius: 16,
             backgroundColor: AppTheme.primaryColor,
             child: Text(
-              'ME',
+              'من',
               style: TextStyle(color: Colors.white, fontSize: 10),
             ),
           ),
@@ -186,7 +186,7 @@ class PostCard extends StatelessWidget {
           Expanded(
             child: TextField(
               decoration: InputDecoration(
-                hintText: 'Add a comment...',
+                hintText: 'نظری اضافه کنید...',
                 hintStyle: TextStyle(fontSize: 14),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -215,7 +215,7 @@ class PostCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'AI Enhancement Options',
+              'گزینه‌های بهبود هوش مصنوعی',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -225,26 +225,26 @@ class PostCard extends StatelessWidget {
             _aiOption(
               context,
               Icons.auto_awesome,
-              'Improve this post',
-              'Enhance clarity and engagement',
+              'بهبود این پست',
+              'افزایش وضوح و جذابیت',
             ),
             _aiOption(
               context,
               Icons.summarize,
-              'Summarize',
-              'Get a brief summary of this post',
+              'خلاصه‌سازی',
+              'دریافت خلاصه‌ای کوتاه از این پست',
             ),
             _aiOption(
               context,
               Icons.translate,
-              'Translate',
-              'Convert to your preferred language',
+              'ترجمه',
+              'تبدیل به زبان مورد نظر شما',
             ),
             _aiOption(
               context,
               Icons.psychology,
-              'Ask AI about this',
-              'Get AI insights on this content',
+              'از هوش مصنوعی درباره این بپرسید',
+              'دریافت بینش هوش مصنوعی درباره این محتوا',
             ),
           ],
         ),

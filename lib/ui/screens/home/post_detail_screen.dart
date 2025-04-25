@@ -15,12 +15,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   final Map<String, dynamic> _post = {
     'id': '1',
     'user': {
-      'name': 'Sarah Johnson',
+      'name': 'سارا جانسون',
       'avatar': null,
-      'title': 'Product Manager at TechCorp',
+      'title': 'مدیر محصول در تک‌کورپ',
     },
-    'timeAgo': '2h',
-    'content': 'Excited to announce that we\'ve just launched our new AI-powered feature that helps teams collaborate better! After months of hard work, our team has created a solution that uses machine learning to analyze team interactions and suggest improvements to workflows and communication patterns.\n\nThis feature can identify bottlenecks in project management, highlight successful collaboration patterns, and even recommend optimal team structures for specific types of projects.\n\n#ProductManagement #AI #Innovation #TeamCollaboration',
+    'timeAgo': '۲ ساعت',
+    'content': 'خوشحالم که اعلام کنم ما به تازگی قابلیت جدید مبتنی بر هوش مصنوعی را راه‌اندازی کرده‌ایم که به تیم‌ها کمک می‌کند بهتر همکاری کنند! پس از ماه‌ها تلاش سخت، تیم ما راه‌حلی ایجاد کرده است که از یادگیری ماشین برای تحلیل تعاملات تیم استفاده می‌کند و بهبودهایی در جریان‌های کاری و الگوهای ارتباطی پیشنهاد می‌دهد.\n\nاین قابلیت می‌تواند گلوگاه‌ها در مدیریت پروژه را شناسایی کند، الگوهای همکاری موفق را برجسته کند و حتی ساختارهای بهینه تیم را برای انواع خاصی از پروژه‌ها پیشنهاد دهد.\n\n#مدیریت_محصول #هوش_مصنوعی #نوآوری #همکاری_تیمی',
     'likes': 128,
     'comments': 32,
     'shares': 18,
@@ -31,31 +31,31 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     {
       'id': '1',
       'user': {
-        'name': 'Alex Chen',
+        'name': 'علی چن',
         'avatar': null,
       },
-      'content': 'This is amazing! Would love to learn more about how the AI analyzes team interactions. Is it based on communication frequency or does it also consider the content of messages?',
-      'timeAgo': '1h',
+      'content': 'این فوق‌العاده است! دوست دارم بیشتر درباره نحوه تحلیل تعاملات تیم توسط هوش مصنوعی بدانم. آیا بر اساس تناوب ارتباطات است یا محتوای پیام‌ها را نیز در نظر می‌گیرد؟',
+      'timeAgo': '۱ ساعت',
       'likes': 24,
     },
     {
       'id': '2',
       'user': {
-        'name': 'Priya Patel',
+        'name': 'پریا پاتل',
         'avatar': null,
       },
-      'content': 'Congratulations on the launch! We\'ve been looking for something like this for our remote teams.',
-      'timeAgo': '45m',
+      'content': 'تبریک برای راه‌اندازی! ما به دنبال چیزی مشابه این برای تیم‌های دورکار خود بوده‌ایم.',
+      'timeAgo': '۴۵ دقیقه',
       'likes': 15,
     },
     {
       'id': '3',
       'user': {
-        'name': 'Michael Roberts',
+        'name': 'محمد رابرتز',
         'avatar': null,
       },
-      'content': 'Interesting approach! How does it handle privacy concerns with analyzing team communications?',
-      'timeAgo': '30m',
+      'content': 'رویکرد جالبی است! چگونه نگرانی‌های مربوط به حریم خصوصی در تحلیل ارتباطات تیم را مدیریت می‌کنید؟',
+      'timeAgo': '۳۰ دقیقه',
       'likes': 8,
     },
   ];
@@ -73,11 +73,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       _comments.insert(0, {
         'id': DateTime.now().toString(),
         'user': {
-          'name': 'John Doe',
+          'name': 'جان دو',
           'avatar': null,
         },
         'content': _commentController.text,
-        'timeAgo': 'Just now',
+        'timeAgo': 'همین الان',
         'likes': 0,
       });
       _commentController.clear();
@@ -89,7 +89,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Post',
+          'پست',
           style: TextStyle(
             color: AppTheme.secondaryColor,
             fontWeight: FontWeight.bold,
@@ -232,7 +232,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               ),
               SizedBox(width: 4),
               Text(
-                '${_post['likes']} likes',
+                '${_post['likes']} پسند',
                 style: TextStyle(
                   color: AppTheme.lightTextColor,
                 ),
@@ -242,7 +242,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           Row(
             children: [
               Text(
-                '${_post['comments']} comments • ${_post['shares']} shares',
+                '${_post['comments']} نظر • ${_post['shares']} اشتراک‌گذاری',
                 style: TextStyle(
                   color: AppTheme.lightTextColor,
                 ),
@@ -262,7 +262,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         children: [
           _buildActionButton(
             icon: _isLiked ? Icons.thumb_up : Icons.thumb_up_outlined,
-            label: 'Like',
+            label: 'پسندیدن',
             color: _isLiked ? AppTheme.primaryColor : null,
             onTap: () {
               setState(() {
@@ -273,7 +273,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
           _buildActionButton(
             icon: Icons.comment_outlined,
-            label: 'Comment',
+            label: 'نظر',
             onTap: () {
               // Focus on comment input
               FocusScope.of(context).requestFocus(FocusNode());
@@ -284,7 +284,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
           _buildActionButton(
             icon: Icons.share_outlined,
-            label: 'Share',
+            label: 'اشتراک‌گذاری',
             onTap: () {
               // Share post
             },
@@ -343,7 +343,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         Padding(
           padding: EdgeInsets.all(16),
           child: Text(
-            'Comments (${_comments.length})',
+            'نظرات (${_comments.length})',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -372,13 +372,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         children: [
           CircleAvatar(
             radius: 18,
-            backgroundColor: comment['user']['name'] == 'John Doe'
+            backgroundColor: comment['user']['name'] == 'جان دو'
                 ? AppTheme.primaryColor
                 : Colors.grey.shade300,
             child: Text(
               comment['user']['name'].substring(0, 1),
               style: TextStyle(
-                color: comment['user']['name'] == 'John Doe'
+                color: comment['user']['name'] == 'جان دو'
                     ? Colors.white
                     : AppTheme.secondaryColor,
               ),
@@ -422,7 +422,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       ),
                       SizedBox(width: 16),
                       Text(
-                        'Like',
+                        'پسندیدن',
                         style: TextStyle(
                           color: AppTheme.lightTextColor,
                           fontSize: 12,
@@ -431,7 +431,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       ),
                       SizedBox(width: 16),
                       Text(
-                        'Reply',
+                        'پاسخ',
                         style: TextStyle(
                           color: AppTheme.lightTextColor,
                           fontSize: 12,
@@ -478,7 +478,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             child: TextField(
               controller: _commentController,
               decoration: InputDecoration(
-                hintText: 'Write a comment...',
+                hintText: 'نظری بنویسید...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
@@ -515,7 +515,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
           _buildOptionItem(
             icon: Icons.bookmark_outline,
-            title: _isBookmarked ? 'Remove from saved' : 'Save post',
+            title: _isBookmarked ? 'حذف از ذخیره‌شده‌ها' : 'ذخیره پست',
             onTap: () {
               setState(() {
                 _isBookmarked = !_isBookmarked;
@@ -525,21 +525,21 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
           _buildOptionItem(
             icon: Icons.visibility_off_outlined,
-            title: 'Hide post',
+            title: 'پنهان کردن پست',
             onTap: () {
               Navigator.pop(context);
             },
           ),
           _buildOptionItem(
             icon: Icons.person_outline,
-            title: 'View profile',
+            title: 'مشاهده پروفایل',
             onTap: () {
               Navigator.pop(context);
             },
           ),
           _buildOptionItem(
             icon: Icons.flag_outlined,
-            title: 'Report post',
+            title: 'گزارش پست',
             isDestructive: true,
             onTap: () {
               Navigator.pop(context);
@@ -583,7 +583,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'AI Enhancement Options',
+              'گزینه‌های بهبود هوش مصنوعی',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -592,8 +592,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             SizedBox(height: 20),
             _aiOption(
               icon: Icons.summarize,
-              title: 'Summarize Post',
-              subtitle: 'Get a brief summary of this post',
+              title: 'خلاصه پست',
+              subtitle: 'خلاصه‌ای کوتاه از این پست دریافت کنید',
               onTap: () {
                 Navigator.pop(context);
                 _showAiSummary();
@@ -601,8 +601,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
             _aiOption(
               icon: Icons.translate,
-              title: 'Translate Post',
-              subtitle: 'Convert to your preferred language',
+              title: 'ترجمه پست',
+              subtitle: 'به زبان مورد نظر شما تبدیل کنید',
               onTap: () {
                 Navigator.pop(context);
                 _showLanguageSelection();
@@ -610,8 +610,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
             _aiOption(
               icon: Icons.psychology,
-              title: 'Ask AI about this post',
-              subtitle: 'Get AI insights on this content',
+              title: 'از هوش مصنوعی درباره این پست بپرسید',
+              subtitle: 'بینش هوش مصنوعی درباره این محتوا را دریافت کنید',
               onTap: () {
                 Navigator.pop(context);
                 _showAiInsights();
@@ -619,8 +619,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
             _aiOption(
               icon: Icons.lightbulb_outline,
-              title: 'Generate related content ideas',
-              subtitle: 'AI suggestions for your own posts',
+              title: 'تولید ایده‌های محتوای مرتبط',
+              subtitle: 'پیشنهادهای هوش مصنوعی برای پست‌های خودتان',
               onTap: () {
                 Navigator.pop(context);
                 _showContentIdeas();
@@ -661,7 +661,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             Icon(Icons.summarize, color: AppTheme.primaryColor),
             SizedBox(width: 8),
-            Text('AI Summary'),
+            Text('خلاصه هوش مصنوعی'),
           ],
         ),
         content: Column(
@@ -669,17 +669,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'TechCorp has launched a new AI feature that:',
+              'تک‌کورپ یک قابلیت جدید هوش مصنوعی راه‌اندازی کرده است که:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            Text('• Analyzes team interactions to improve collaboration'),
-            Text('• Identifies bottlenecks in project management'),
-            Text('• Highlights successful collaboration patterns'),
-            Text('• Recommends optimal team structures'),
+            Text('• تعاملات تیم را برای بهبود همکاری تحلیل می‌کند'),
+            Text('• گلوگاه‌ها در مدیریت پروژه را شناسایی می‌کند'),
+            Text('• الگوهای همکاری موفق را برجسته می‌کند'),
+            Text('• ساختارهای بهینه تیم را پیشنهاد می‌دهد'),
             SizedBox(height: 16),
             Text(
-              'Key focus: AI-powered team optimization and workflow improvements.',
+              'تمرکز اصلی: بهینه‌سازی تیم با هوش مصنوعی و بهبود جریان‌های کاری.',
               style: TextStyle(fontStyle: FontStyle.italic),
             ),
           ],
@@ -687,7 +687,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text('بستن'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -695,7 +695,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               // Copy to clipboard
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Summary copied to clipboard'),
+                  content: Text('خلاصه در کلیپ‌بورد کپی شد'),
                   backgroundColor: Colors.green,
                 ),
               );
@@ -703,7 +703,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
             ),
-            child: Text('Copy'),
+            child: Text('کپی'),
           ),
         ],
       ),
@@ -714,22 +714,22 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Select Language'),
+        title: Text('انتخاب زبان'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _languageOption('English (Original)'),
-            _languageOption('Farsi (Persian)'),
-            _languageOption('Arabic'),
-            _languageOption('French'),
-            _languageOption('German'),
-            _languageOption('Spanish'),
+            _languageOption('فارسی (اصلی)'),
+            _languageOption('انگلیسی'),
+            _languageOption('عربی'),
+            _languageOption('فرانسوی'),
+            _languageOption('آلمانی'),
+            _languageOption('اسپانیایی'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: Text('لغو'),
           ),
         ],
       ),
@@ -752,7 +752,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
                 ),
                 SizedBox(width: 16),
-                Text('Translating...'),
+                Text('در حال ترجمه...'),
               ],
             ),
           ),
@@ -775,18 +775,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             Icon(Icons.translate, color: AppTheme.primaryColor),
             SizedBox(width: 8),
-            Text('Translated to $language'),
+            Text('ترجمه شده به ${language}'),
           ],
         ),
         content: Text(
-          language == 'Farsi (Persian)'
-              ? 'خوشحالم که اعلام کنم ما ویژگی جدید مبتنی بر هوش مصنوعی را راه‌اندازی کرده‌ایم که به تیم‌ها کمک می‌کند بهتر همکاری کنند! پس از ماه‌ها کار سخت، تیم ما راه‌حلی ایجاد کرده است که از یادگیری ماشین برای تحلیل تعاملات تیم استفاده می‌کند و بهبودهایی را در جریان‌های کاری و الگوهای ارتباطی پیشنهاد می‌دهد.'
+          language == 'انگلیسی'
+              ? 'Excited to announce that we\'ve just launched our new AI-powered feature that helps teams collaborate better! After months of hard work, our team has created a solution that uses machine learning to analyze team interactions and suggest improvements to workflows and communication patterns.'
               : _post['content'],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text('بستن'),
           ),
         ],
       ),
@@ -801,7 +801,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             Icon(Icons.psychology, color: AppTheme.primaryColor),
             SizedBox(width: 8),
-            Text('AI Insights'),
+            Text('بینش هوش مصنوعی'),
           ],
         ),
         content: Column(
@@ -809,28 +809,28 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'This post is about:',
+              'این پست درباره:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            Text('• A new product launch in the AI and team collaboration space'),
-            Text('• Using machine learning for team optimization'),
-            Text('• Workflow improvement through data analysis'),
+            Text('• راه‌اندازی محصول جدید در حوزه هوش مصنوعی و همکاری تیمی'),
+            Text('• استفاده از یادگیری ماشین برای بهینه‌سازی تیم'),
+            Text('• بهبود جریان کاری از طریق تحلیل داده'),
             SizedBox(height: 16),
             Text(
-              'Related topics you might be interested in:',
+              'موضوعات مرتبطی که ممکن است برای شما جالب باشند:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            Text('• Team productivity measurement'),
-            Text('• AI ethics in workplace monitoring'),
-            Text('• Machine learning for business optimization'),
+            Text('• سنجش بهره‌وری تیم'),
+            Text('• اخلاق هوش مصنوعی در نظارت بر محل کار'),
+            Text('• یادگیری ماشین برای بهینه‌سازی کسب و کار'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text('بستن'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -839,24 +839,24 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: Text('Ask AI about this post'),
+                  title: Text('از هوش مصنوعی درباره این پست بپرسید'),
                   content: TextField(
                     decoration: InputDecoration(
-                      hintText: 'Type your question...',
+                      hintText: 'سوال خود را بنویسید...',
                       border: OutlineInputBorder(),
                     ),
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text('Cancel'),
+                      child: Text('لغو'),
                     ),
                     ElevatedButton(
                       onPressed: () => Navigator.pop(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryColor,
                       ),
-                      child: Text('Ask'),
+                      child: Text('پرسیدن'),
                     ),
                   ],
                 ),
@@ -865,7 +865,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
             ),
-            child: Text('Ask Follow-up'),
+            child: Text('پرسیدن سوال بیشتر'),
           ),
         ],
       ),
@@ -880,7 +880,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             Icon(Icons.lightbulb_outline, color: AppTheme.primaryColor),
             SizedBox(width: 8),
-            Text('Content Ideas'),
+            Text('ایده‌های محتوا'),
           ],
         ),
         content: Column(
@@ -888,30 +888,30 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Based on this post, you could create content about:',
+              'بر اساس این پست، شما می‌توانید محتوایی درباره این موارد ایجاد کنید:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
             _contentIdeaItem(
-              'How AI is transforming team collaboration in 2023',
-              '78% match with your profile',
+              'چگونه هوش مصنوعی همکاری تیمی را در سال ۲۰۲۳ متحول می‌کند',
+              '۷۸٪ تطابق با پروفایل شما',
             ),
             SizedBox(height: 12),
             _contentIdeaItem(
-              'The ethics of using AI to monitor team performance',
-              '65% match with your profile',
+              'اخلاق استفاده از هوش مصنوعی برای نظارت بر عملکرد تیم',
+              '۶۵٪ تطابق با پروفایل شما',
             ),
             SizedBox(height: 12),
             _contentIdeaItem(
-              'Case study: Implementing AI in project management',
-              '82% match with your profile',
+              'مطالعه موردی: پیاده‌سازی هوش مصنوعی در مدیریت پروژه',
+              '۸۲٪ تطابق با پروفایل شما',
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text('بستن'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -919,7 +919,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               // Generate a draft post
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Content idea saved to drafts'),
+                  content: Text('ایده محتوا در پیش‌نویس‌ها ذخیره شد'),
                   backgroundColor: Colors.green,
                 ),
               );
@@ -927,7 +927,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
             ),
-            child: Text('Save Ideas'),
+            child: Text('ذخیره ایده‌ها'),
           ),
         ],
       ),

@@ -60,14 +60,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Reset Password',
+            'بازیابی رمز عبور',
             style: Theme.of(context).textTheme.displayMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: 8),
           Text(
-            'Enter your email address and we\'ll send you a link to reset your password.',
+            'ایمیل خود را وارد کنید و ما لینک بازیابی رمز عبور را برای شما ارسال خواهیم کرد.',
             style: TextStyle(
               color: AppTheme.lightTextColor,
               fontSize: 16,
@@ -76,17 +76,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           SizedBox(height: 32),
           // Email field
           CustomTextField(
-            label: 'Email',
-            hintText: 'Enter your email',
+            label: 'ایمیل',
+            hintText: 'ایمیل خود را وارد کنید',
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             prefixIcon: Icons.email_outlined,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your email';
+                return 'لطفا ایمیل خود را وارد کنید';
               }
               if (!value.contains('@')) {
-                return 'Please enter a valid email';
+                return 'لطفا یک ایمیل معتبر وارد کنید';
               }
               return null;
             },
@@ -94,7 +94,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           SizedBox(height: 24),
           // Reset button
           CustomButton(
-            text: 'Send Reset Link',
+            text: 'ارسال لینک بازیابی',
             isLoading: _isLoading,
             onPressed: _resetPassword,
           ),
@@ -106,7 +106,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 Navigator.pop(context);
               },
               child: Text(
-                'Back to Login',
+                'بازگشت به صفحه ورود',
                 style: TextStyle(
                   color: AppTheme.primaryColor,
                   fontWeight: FontWeight.bold,
@@ -139,7 +139,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         SizedBox(height: 32),
         Text(
-          'Check Your Email',
+          'ایمیل خود را بررسی کنید',
           style: Theme.of(context).textTheme.displayMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -147,7 +147,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         SizedBox(height: 16),
         Text(
-          'We\'ve sent a password reset link to:',
+          'ما لینک بازیابی رمز عبور را به این آدرس ارسال کردیم:',
           style: TextStyle(
             fontSize: 16,
             color: AppTheme.secondaryColor,
@@ -166,7 +166,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         SizedBox(height: 24),
         Text(
-          'Please check your email and follow the instructions to reset your password.',
+          'لطفا ایمیل خود را بررسی کنید و دستورالعمل‌های بازیابی رمز عبور را دنبال کنید.',
           style: TextStyle(
             fontSize: 14,
             color: AppTheme.lightTextColor,
@@ -175,7 +175,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         SizedBox(height: 40),
         CustomButton(
-          text: 'Back to Login',
+          text: 'بازگشت به صفحه ورود',
           onPressed: () {
             Navigator.pop(context);
           },
@@ -188,7 +188,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             });
           },
           child: Text(
-            'Didn\'t receive the email? Try again',
+            'ایمیل را دریافت نکردید؟ دوباره تلاش کنید',
             style: TextStyle(
               color: AppTheme.primaryColor,
             ),

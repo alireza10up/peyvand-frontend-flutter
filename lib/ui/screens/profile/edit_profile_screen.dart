@@ -22,12 +22,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     // Initialize with user data
-    _nameController.text = 'John Doe';
-    _titleController.text = 'Senior Software Engineer';
-    _companyController.text = 'Tech Innovations Inc.';
-    _locationController.text = 'Tehran, Iran';
-    _aboutController.text = 'Passionate software engineer with over 8 years of experience in developing scalable applications. Specialized in mobile development and AI integration.';
-    _skillsController.text = 'Flutter, React Native, Machine Learning, Python, JavaScript, Node.js, Firebase, AWS, UI/UX Design';
+    _nameController.text = 'جان دو';
+    _titleController.text = 'مهندس نرم‌افزار ارشد';
+    _companyController.text = 'شرکت نوآوری‌های فناوری';
+    _locationController.text = 'تهران، ایران';
+    _aboutController.text = 'مهندس نرم‌افزار با اشتیاق و بیش از ۸ سال تجربه در توسعه برنامه‌های مقیاس‌پذیر. متخصص در توسعه موبایل و ادغام هوش مصنوعی.';
+    _skillsController.text = 'فلاتر، ری‌اکت نیتیو، یادگیری ماشین، پایتون، جاوااسکریپت، نود.جی‌اس، فایربیس، AWS، طراحی رابط کاربری';
   }
 
   @override
@@ -54,7 +54,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Profile updated successfully'),
+            content: Text('پروفایل با موفقیت به‌روزرسانی شد'),
             backgroundColor: Colors.green,
           ),
         );
@@ -68,7 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Edit Profile',
+          'ویرایش پروفایل',
           style: TextStyle(
             color: AppTheme.secondaryColor,
             fontWeight: FontWeight.bold,
@@ -93,7 +93,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             )
                 : Text(
-              'Save',
+              'ذخیره',
               style: TextStyle(
                 color: AppTheme.primaryColor,
                 fontWeight: FontWeight.bold,
@@ -113,7 +113,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               _buildProfileImageSection(),
               SizedBox(height: 24),
               Text(
-                'Basic Information',
+                'اطلاعات اصلی',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -122,43 +122,43 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               SizedBox(height: 16),
               CustomTextField(
-                label: 'Full Name',
-                hintText: 'Enter your full name',
+                label: 'نام کامل',
+                hintText: 'نام کامل خود را وارد کنید',
                 controller: _nameController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your name';
+                    return 'لطفاً نام خود را وارد کنید';
                   }
                   return null;
                 },
               ),
               SizedBox(height: 16),
               CustomTextField(
-                label: 'Professional Title',
-                hintText: 'Enter your professional title',
+                label: 'عنوان حرفه‌ای',
+                hintText: 'عنوان حرفه‌ای خود را وارد کنید',
                 controller: _titleController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your title';
+                    return 'لطفاً عنوان خود را وارد کنید';
                   }
                   return null;
                 },
               ),
               SizedBox(height: 16),
               CustomTextField(
-                label: 'Company',
-                hintText: 'Enter your company name',
+                label: 'شرکت',
+                hintText: 'نام شرکت خود را وارد کنید',
                 controller: _companyController,
               ),
               SizedBox(height: 16),
               CustomTextField(
-                label: 'Location',
-                hintText: 'Enter your location',
+                label: 'موقعیت مکانی',
+                hintText: 'موقعیت مکانی خود را وارد کنید',
                 controller: _locationController,
               ),
               SizedBox(height: 24),
               Text(
-                'About',
+                'درباره',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -167,14 +167,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               SizedBox(height: 16),
               CustomTextField(
-                label: 'Bio',
-                hintText: 'Tell us about yourself',
+                label: 'بیوگرافی',
+                hintText: 'درباره خودتان به ما بگویید',
                 controller: _aboutController,
                 maxLines: 5,
               ),
               SizedBox(height: 24),
               Text(
-                'Skills',
+                'مهارت‌ها',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -183,15 +183,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               SizedBox(height: 16),
               CustomTextField(
-                label: 'Skills (comma separated)',
-                hintText: 'Enter your skills, separated by commas',
+                label: 'مهارت‌ها (با کاما جدا شده)',
+                hintText: 'مهارت‌های خود را وارد کنید، با کاما جدا شده',
                 controller: _skillsController,
               ),
               SizedBox(height: 24),
               _buildAiSuggestion(),
               SizedBox(height: 40),
               CustomButton(
-                text: 'Save Profile',
+                text: 'ذخیره پروفایل',
                 isLoading: _isLoading,
                 onPressed: _saveProfile,
               ),
@@ -203,12 +203,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: Text('Delete Account'),
-                        content: Text('Are you sure you want to delete your account? This action cannot be undone.'),
+                        title: Text('حذف حساب کاربری'),
+                        content: Text('آیا مطمئن هستید که می‌خواهید حساب کاربری خود را حذف کنید؟ این عمل قابل بازگشت نیست.'),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: Text('Cancel'),
+                            child: Text('لغو'),
                           ),
                           TextButton(
                             onPressed: () {
@@ -216,7 +216,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               // Delete account logic here
                             },
                             child: Text(
-                              'Delete',
+                              'حذف',
                               style: TextStyle(color: Colors.red),
                             ),
                           ),
@@ -225,7 +225,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     );
                   },
                   child: Text(
-                    'Delete Account',
+                    'حذف حساب کاربری',
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
@@ -281,7 +281,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
           SizedBox(height: 16),
           Text(
-            'Change Profile Picture',
+            'تغییر عکس پروفایل',
             style: TextStyle(
               color: AppTheme.primaryColor,
               fontWeight: FontWeight.bold,
@@ -313,7 +313,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               SizedBox(width: 8),
               Text(
-                'AI Suggestion',
+                'پیشنهاد هوش مصنوعی',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppTheme.primaryColor,
@@ -324,7 +324,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Based on your profile, adding "Mobile App Architecture" and "Team Leadership" to your skills could make your profile 30% more discoverable.',
+            'بر اساس پروفایل شما، افزودن "معماری اپلیکیشن موبایل" و "رهبری تیم" به مهارت‌های شما می‌تواند قابلیت کشف پروفایل شما را تا ۳۰٪ افزایش دهد.',
             style: TextStyle(
               color: AppTheme.secondaryColor,
             ),
@@ -337,10 +337,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onPressed: () {
                   // Add suggested skills
                   final currentSkills = _skillsController.text;
-                  _skillsController.text = '$currentSkills, Mobile App Architecture, Team Leadership';
+                  _skillsController.text = '$currentSkills، معماری اپلیکیشن موبایل، رهبری تیم';
                 },
                 child: Text(
-                  'Add Suggested Skills',
+                  'افزودن مهارت‌های پیشنهادی',
                   style: TextStyle(
                     color: AppTheme.primaryColor,
                     fontWeight: FontWeight.bold,

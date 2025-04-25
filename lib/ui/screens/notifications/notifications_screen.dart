@@ -14,62 +14,62 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
       'id': '1',
       'type': 'connection',
       'user': {
-        'name': 'Alex Chen',
+        'name': 'علی چن',
         'avatar': null,
       },
-      'content': 'accepted your connection request',
-      'timeAgo': '2m',
+      'content': 'درخواست ارتباط شما را پذیرفت',
+      'timeAgo': '۲ دقیقه',
       'isRead': false,
     },
     {
       'id': '2',
       'type': 'like',
       'user': {
-        'name': 'Sarah Johnson',
+        'name': 'سارا جانسون',
         'avatar': null,
       },
-      'content': 'liked your post about AI integration',
-      'timeAgo': '1h',
+      'content': 'پست شما درباره ادغام هوش مصنوعی را پسندید',
+      'timeAgo': '۱ ساعت',
       'isRead': false,
     },
     {
       'id': '3',
       'type': 'comment',
       'user': {
-        'name': 'Michael Roberts',
+        'name': 'محمد رابرتز',
         'avatar': null,
       },
-      'content': 'commented on your post: "Great insights! Would love to hear more about how you implemented this."',
-      'timeAgo': '3h',
+      'content': 'روی پست شما نظر داد: "بینش‌های عالی! دوست دارم بیشتر درباره نحوه پیاده‌سازی این موضوع بشنوم."',
+      'timeAgo': '۳ ساعت',
       'isRead': true,
     },
     {
       'id': '4',
       'type': 'mention',
       'user': {
-        'name': 'Priya Patel',
+        'name': 'پریا پاتل',
         'avatar': null,
       },
-      'content': 'mentioned you in a comment',
-      'timeAgo': '5h',
+      'content': 'شما را در یک نظر منشن کرد',
+      'timeAgo': '۵ ساعت',
       'isRead': true,
     },
     {
       'id': '5',
       'type': 'job',
       'user': {
-        'name': 'Tech Innovations Inc.',
+        'name': 'شرکت نوآوری‌های فناوری',
         'avatar': null,
       },
-      'content': 'posted a job that matches your skills: "Senior Flutter Developer"',
-      'timeAgo': '1d',
+      'content': 'شغلی که با مهارت‌های شما مطابقت دارد منتشر کرد: "توسعه‌دهنده ارشد فلاتر"',
+      'timeAgo': '۱ روز',
       'isRead': true,
     },
     {
       'id': '6',
       'type': 'ai',
-      'content': 'AI Assistant has suggestions based on your recent activity',
-      'timeAgo': '1d',
+      'content': 'دستیار هوش مصنوعی بر اساس فعالیت‌های اخیر شما پیشنهاداتی دارد',
+      'timeAgo': '۱ روز',
       'isRead': true,
     },
   ];
@@ -91,7 +91,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Notifications',
+          'اعلان‌ها',
           style: TextStyle(
             color: AppTheme.secondaryColor,
             fontWeight: FontWeight.bold,
@@ -109,8 +109,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
           unselectedLabelColor: AppTheme.lightTextColor,
           indicatorColor: AppTheme.primaryColor,
           tabs: [
-            Tab(text: 'All'),
-            Tab(text: 'Unread'),
+            Tab(text: 'همه'),
+            Tab(text: 'خوانده نشده'),
           ],
         ),
         actions: [
@@ -153,7 +153,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
             ),
             SizedBox(height: 16),
             Text(
-              'No notifications',
+              'اعلانی وجود ندارد',
               style: TextStyle(
                 fontSize: 18,
                 color: AppTheme.lightTextColor,

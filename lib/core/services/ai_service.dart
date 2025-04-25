@@ -7,7 +7,7 @@ class AiService {
     await Future.delayed(Duration(seconds: 2));
 
     // Placeholder response
-    return 'Enhanced version of your post:\n\n$content\n\n[AI has improved grammar, clarity, and engagement of this content]';
+    return 'نسخه بهبود یافته پست شما:\n\n$content\n\n[هوش مصنوعی گرامر، وضوح و جذابیت این محتوا را بهبود بخشیده است]';
   }
 
   Future<String> getSimilarProfiles(List<String> skills) async {
@@ -15,7 +15,7 @@ class AiService {
     await Future.delayed(Duration(seconds: 2));
 
     // Placeholder response
-    return 'Based on your skills (${skills.join(", ")}), here are some professionals you might want to connect with...';
+    return 'بر اساس مهارت‌های شما (${skills.join("، ")}), افرادی که ممکن است بخواهید با آن‌ها ارتباط برقرار کنید...';
   }
 
   Future<String> getChatResponse(String message) async {
@@ -24,13 +24,13 @@ class AiService {
 
     // Simple keyword-based responses
     if (message.toLowerCase().contains('hello') || message.toLowerCase().contains('hi')) {
-      return 'Hello! How can I assist you with your professional development today?';
+      return 'سلام! چطور می‌توانم امروز به شما در توسعه حرفه‌ای‌تان کمک کنم؟';
     } else if (message.toLowerCase().contains('job') || message.toLowerCase().contains('career')) {
-      return 'Career development is important! Have you considered updating your skills section to highlight your most relevant expertise?';
+      return 'توسعه شغلی مهم است! آیا به روزرسانی بخش مهارت‌های خود برای برجسته‌سازی تخصص‌های مرتبط‌تان را در نظر گرفته‌اید؟';
     } else if (message.toLowerCase().contains('network') || message.toLowerCase().contains('connect')) {
-      return 'Networking is crucial for career growth. I recommend connecting with professionals in your field and engaging with their content regularly.';
+      return 'شبکه‌سازی برای رشد شغلی بسیار مهم است. توصیه می‌کنم با متخصصان حوزه خود ارتباط برقرار کنید و به طور منظم با محتوای آن‌ها تعامل داشته باشید.';
     } else {
-      return 'Thanks for your message. I\'m here to help with career advice, professional development, and networking tips. Feel free to ask me anything specific!';
+      return 'ممنون از پیام شما. من اینجا هستم تا در مورد مشاوره شغلی، توسعه حرفه‌ای و نکات شبکه‌سازی کمک کنم. لطفاً هر سؤال خاصی دارید بپرسید!';
     }
   }
 
@@ -40,11 +40,11 @@ class AiService {
 
     // Placeholder suggestions
     return [
-      'Update your profile with recent achievements',
-      'Connect with 5 new professionals in your field',
-      'Share an article about industry trends',
-      'Learn a new skill relevant to your career',
-      'Join an industry group or community',
+      'پروفایل خود را با دستاوردهای اخیر به‌روز کنید',
+      'با ۵ متخصص جدید در حوزه خود ارتباط برقرار کنید',
+      'مقاله‌ای درباره روندهای صنعت به اشتراک بگذارید',
+      'مهارت جدیدی مرتبط با شغل خود یاد بگیرید',
+      'به یک گروه یا انجمن تخصصی بپیوندید',
     ];
   }
 }

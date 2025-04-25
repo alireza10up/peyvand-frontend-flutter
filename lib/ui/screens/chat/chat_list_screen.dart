@@ -15,48 +15,48 @@ class _ChatListScreenState extends State<ChatListScreen>
   final List<Map<String, dynamic>> _chats = [
     {
       'id': '1',
-      'name': 'Sarah Johnson',
+      'name': 'سارا جانسون',
       'avatar': null,
-      'lastMessage': 'Thanks for sharing that article!',
-      'time': '2m',
+      'lastMessage': 'ممنون از اشتراک‌گذاری آن مقاله!',
+      'time': '۲د',
       'unread': 2,
       'online': true,
     },
     {
       'id': '2',
-      'name': 'Alex Chen',
+      'name': 'علی چن',
       'avatar': null,
-      'lastMessage': 'Are you available for a quick call tomorrow?',
-      'time': '1h',
+      'lastMessage': 'آیا برای یک تماس سریع فردا وقت دارید؟',
+      'time': '۱س',
       'unread': 0,
       'online': false,
     },
     {
       'id': '3',
-      'name': 'Peyvand AI Assistant',
+      'name': 'دستیار هوش مصنوعی پیوند',
       'avatar': null,
       'lastMessage':
-          'I can help you prepare for your interview. Let me know what you need.',
-      'time': '3h',
+      'من می‌توانم به شما در آمادگی برای مصاحبه کمک کنم. به من بگویید به چه چیزی نیاز دارید.',
+      'time': '۳س',
       'unread': 1,
       'isAI': true,
       'online': true,
     },
     {
       'id': '4',
-      'name': 'Michael Roberts',
+      'name': 'محمد رابرتز',
       'avatar': null,
-      'lastMessage': 'The project deadline has been extended to next Friday.',
-      'time': '5h',
+      'lastMessage': 'مهلت پروژه تا جمعه آینده تمدید شده است.',
+      'time': '۵س',
       'unread': 0,
       'online': false,
     },
     {
       'id': '5',
-      'name': 'Priya Patel',
+      'name': 'پریا پاتل',
       'avatar': null,
-      'lastMessage': 'Did you see the new design proposal?',
-      'time': '1d',
+      'lastMessage': 'طرح پیشنهادی جدید را دیدید؟',
+      'time': '۱روز',
       'unread': 0,
       'online': true,
     },
@@ -80,7 +80,7 @@ class _ChatListScreenState extends State<ChatListScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Messages',
+          'پیام‌ها',
           style: TextStyle(
             color: AppTheme.secondaryColor,
             fontWeight: FontWeight.bold,
@@ -103,7 +103,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search messages',
+                    hintText: 'جستجوی پیام‌ها',
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -121,7 +121,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                 labelColor: AppTheme.primaryColor,
                 unselectedLabelColor: AppTheme.lightTextColor,
                 indicatorColor: AppTheme.primaryColor,
-                tabs: [Tab(text: 'Chats'), Tab(text: 'Groups')],
+                tabs: [Tab(text: 'چت‌ها'), Tab(text: 'گروه‌ها')],
               ),
             ],
           ),
@@ -146,7 +146,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                 Icon(Icons.people, size: 80, color: Colors.grey.shade300),
                 SizedBox(height: 16),
                 Text(
-                  'No groups yet',
+                  'هنوز گروهی وجود ندارد',
                   style: TextStyle(
                     fontSize: 18,
                     color: AppTheme.lightTextColor,
@@ -154,14 +154,14 @@ class _ChatListScreenState extends State<ChatListScreen>
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Create a group to collaborate with multiple people',
+                  'یک گروه ایجاد کنید تا با چندین نفر همکاری کنید',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: AppTheme.lightTextColor),
                 ),
                 SizedBox(height: 24),
                 ElevatedButton.icon(
                   icon: Icon(Icons.add),
-                  label: Text('Create Group'),
+                  label: Text('ایجاد گروه'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -220,7 +220,7 @@ class _ChatListScreenState extends State<ChatListScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'AI Assistant',
+                  'دستیار هوش مصنوعی',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -229,7 +229,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Ask me anything about your career, networking, or skills',
+                  'هر سؤالی درباره شغل، شبکه‌سازی یا مهارت‌های خود بپرسید',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 13,
@@ -271,20 +271,20 @@ class _ChatListScreenState extends State<ChatListScreen>
                 CircleAvatar(
                   radius: 24,
                   backgroundColor:
-                      chat['isAI'] == true
-                          ? AppTheme.primaryColor
-                          : Colors.grey.shade300,
+                  chat['isAI'] == true
+                      ? AppTheme.primaryColor
+                      : Colors.grey.shade300,
                   child:
-                      chat['isAI'] == true
-                          ? Icon(Icons.psychology, color: Colors.white)
-                          : Text(
-                            chat['name'].substring(0, 1),
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                  chat['isAI'] == true
+                      ? Icon(Icons.psychology, color: Colors.white)
+                      : Text(
+                    chat['name'].substring(0, 1),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
                 if (chat['online'] == true)
                   Positioned(
@@ -339,13 +339,13 @@ class _ChatListScreenState extends State<ChatListScreen>
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color:
-                                chat['unread'] > 0
-                                    ? AppTheme.secondaryColor
-                                    : AppTheme.lightTextColor,
+                            chat['unread'] > 0
+                                ? AppTheme.secondaryColor
+                                : AppTheme.lightTextColor,
                             fontWeight:
-                                chat['unread'] > 0
-                                    ? FontWeight.w500
-                                    : FontWeight.normal,
+                            chat['unread'] > 0
+                                ? FontWeight.w500
+                                : FontWeight.normal,
                           ),
                         ),
                       ),

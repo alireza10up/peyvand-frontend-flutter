@@ -16,19 +16,19 @@ class _AiChatScreenState extends State<AiChatScreen> {
   final List<Map<String, dynamic>> _messages = [
     {
       'id': '1',
-      'text': 'Hello! I\'m your Peyvand AI Assistant. How can I help you today?',
+      'text': 'سلام! من دستیار هوش مصنوعی پیوند هستم. چطور می‌توانم امروز به شما کمک کنم؟',
       'isMe': false,
       'isAI': true,
-      'time': '10:30 AM',
+      'time': '10:30',
     },
   ];
 
   final List<String> _suggestions = [
-    'Help me improve my resume',
-    'Find networking opportunities',
-    'Suggest skills I should learn',
-    'How to prepare for a job interview',
-    'Career advice for software engineers',
+    'کمک برای بهبود رزومه من',
+    'یافتن فرصت‌های شبکه‌سازی',
+    'پیشنهاد مهارت‌هایی که باید یاد بگیرم',
+    'چگونه برای مصاحبه شغلی آماده شوم',
+    'مشاوره شغلی برای مهندسان نرم‌افزار',
   ];
 
   @override
@@ -62,16 +62,16 @@ class _AiChatScreenState extends State<AiChatScreen> {
     Future.delayed(Duration(seconds: 2), () {
       String response = '';
 
-      if (messageText.toLowerCase().contains('resume')) {
-        response = 'I can help you improve your resume! Here are some tips:\n\n1. Tailor your resume to each job application\n2. Quantify your achievements when possible\n3. Use action verbs\n4. Keep it concise and well-formatted\n5. Include relevant keywords\n\nWould you like me to review your resume if you share it?';
-      } else if (messageText.toLowerCase().contains('interview')) {
-        response = 'Preparing for interviews is crucial. Here\'s a quick guide:\n\n1. Research the company thoroughly\n2. Practice common questions\n3. Prepare examples of your past work\n4. Have questions ready to ask the interviewer\n5. Dress professionally and arrive early\n\nIs there a specific type of interview you\'re preparing for?';
-      } else if (messageText.toLowerCase().contains('network') || messageText.toLowerCase().contains('networking')) {
-        response = 'Networking is key to career growth! Try these strategies:\n\n1. Attend industry events and conferences\n2. Join professional groups on LinkedIn\n3. Reach out to alumni from your school\n4. Schedule informational interviews\n5. Follow up with new connections\n\nWould you like suggestions for networking events in your area?';
-      } else if (messageText.toLowerCase().contains('skill')) {
-        response = 'Based on current tech trends, these skills are in high demand:\n\n1. AI and Machine Learning\n2. Data Science\n3. Cloud Computing (AWS, Azure)\n4. Cybersecurity\n5. Full-stack Development\n6. UX/UI Design\n\nWhich of these areas interests you most?';
+      if (messageText.toLowerCase().contains('resume') || messageText.contains('رزومه')) {
+        response = 'من می‌توانم به شما در بهبود رزومه‌تان کمک کنم! اینجا چند نکته است:\n\n۱. رزومه خود را برای هر درخواست شغلی سفارشی کنید\n۲. دستاوردهای خود را در صورت امکان به صورت کمّی بیان کنید\n۳. از افعال عملی استفاده کنید\n۴. آن را مختصر و با فرمت مناسب نگه دارید\n۵. کلمات کلیدی مرتبط را بگنجانید\n\nآیا می‌خواهید اگر رزومه خود را به اشتراک بگذارید، آن را بررسی کنم؟';
+      } else if (messageText.toLowerCase().contains('interview') || messageText.contains('مصاحبه')) {
+        response = 'آمادگی برای مصاحبه‌ها بسیار مهم است. اینجا یک راهنمای سریع است:\n\n۱. شرکت را به طور کامل بررسی کنید\n۲. سؤالات متداول را تمرین کنید\n۳. نمونه‌هایی از کارهای قبلی خود آماده کنید\n۴. سؤالاتی برای پرسیدن از مصاحبه‌کننده آماده کنید\n۵. لباس حرفه‌ای بپوشید و زودتر برسید\n\nآیا برای نوع خاصی از مصاحبه آماده می‌شوید؟';
+      } else if (messageText.toLowerCase().contains('network') || messageText.toLowerCase().contains('networking') || messageText.contains('شبکه')) {
+        response = 'شبکه‌سازی کلید رشد شغلی است! این استراتژی‌ها را امتحان کنید:\n\n۱. در رویدادها و کنفرانس‌های صنعتی شرکت کنید\n۲. به گروه‌های حرفه‌ای در لینکدین بپیوندید\n۳. با فارغ‌التحصیلان دانشگاه خود تماس بگیرید\n۴. مصاحبه‌های اطلاعاتی برنامه‌ریزی کنید\n۵. با ارتباطات جدید پیگیری کنید\n\nآیا می‌خواهید پیشنهاداتی برای رویدادهای شبکه‌سازی در منطقه خود دریافت کنید؟';
+      } else if (messageText.toLowerCase().contains('skill') || messageText.contains('مهارت')) {
+        response = 'بر اساس روندهای فعلی فناوری، این مهارت‌ها بسیار مورد تقاضا هستند:\n\n۱. هوش مصنوعی و یادگیری ماشین\n۲. علم داده\n۳. رایانش ابری (AWS، Azure)\n۴. امنیت سایبری\n۵. توسعه Full-stack\n۶. طراحی UX/UI\n\nکدام یک از این حوزه‌ها برای شما جذاب‌تر است؟';
       } else {
-        response = 'Thanks for your message! I\'m here to help with career advice, professional development, networking tips, and more. Feel free to ask me anything specific about your career goals or challenges.';
+        response = 'ممنون از پیام شما! من اینجا هستم تا در مورد مشاوره شغلی، توسعه حرفه‌ای، نکات شبکه‌سازی و موارد دیگر به شما کمک کنم. لطفاً هر سؤال خاصی درباره اهداف یا چالش‌های شغلی خود دارید، بپرسید.';
       }
 
       final aiResponse = {
@@ -130,7 +130,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'AI Assistant',
+                  'دستیار هوش مصنوعی',
                   style: TextStyle(
                     color: AppTheme.secondaryColor,
                     fontSize: 16,
@@ -138,7 +138,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   ),
                 ),
                 Text(
-                  _isTyping ? 'typing...' : 'Online',
+                  _isTyping ? 'در حال تایپ...' : 'آنلاین',
                   style: TextStyle(
                     color: _isTyping ? AppTheme.primaryColor : Colors.green,
                     fontSize: 12,
@@ -157,7 +157,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                 _messages.clear();
                 _messages.add({
                   'id': '1',
-                  'text': 'Hello! I\'m your Peyvand AI Assistant. How can I help you today?',
+                  'text': 'سلام! من دستیار هوش مصنوعی پیوند هستم. چطور می‌توانم امروز به شما کمک کنم؟',
                   'isMe': false,
                   'isAI': true,
                   'time': '${DateTime.now().hour}:${DateTime.now().minute}',
@@ -222,7 +222,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    'AI is thinking...',
+                    'هوش مصنوعی در حال فکر کردن است...',
                     style: TextStyle(
                       color: AppTheme.lightTextColor,
                       fontStyle: FontStyle.italic,
@@ -255,7 +255,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   child: TextField(
                     controller: _messageController,
                     decoration: InputDecoration(
-                      hintText: 'Ask AI anything...',
+                      hintText: 'هر سوالی از هوش مصنوعی بپرسید...',
                       hintStyle: TextStyle(color: AppTheme.lightTextColor),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -300,7 +300,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
           Padding(
             padding: EdgeInsets.only(left: 8, bottom: 8),
             child: Text(
-              'You might want to ask:',
+              'شاید بخواهید بپرسید:',
               style: TextStyle(
                 color: AppTheme.lightTextColor,
                 fontStyle: FontStyle.italic,

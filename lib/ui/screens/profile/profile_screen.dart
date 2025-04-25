@@ -14,39 +14,39 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   late TabController _tabController;
 
   final Map<String, dynamic> _userData = {
-    'name': 'John Doe',
-    'title': 'Senior Software Engineer',
-    'company': 'Tech Innovations Inc.',
-    'location': 'Tehran, Iran',
+    'name': 'جان دو',
+    'title': 'مهندس نرم‌افزار ارشد',
+    'company': 'شرکت نوآوری‌های فناوری',
+    'location': 'تهران، ایران',
     'connections': 487,
-    'about': 'Passionate software engineer with over 8 years of experience in developing scalable applications. Specialized in mobile development and AI integration.',
+    'about': 'مهندس نرم‌افزار با اشتیاق و بیش از ۸ سال تجربه در توسعه برنامه‌های مقیاس‌پذیر. متخصص در توسعه موبایل و ادغام هوش مصنوعی.',
     'skills': [
-      'Flutter', 'React Native', 'Machine Learning', 'Python', 'JavaScript', 'Node.js', 'Firebase', 'AWS', 'UI/UX Design'
+      'فلاتر', 'ری‌اکت نیتیو', 'یادگیری ماشین', 'پایتون', 'جاوااسکریپت', 'نود.جی‌اس', 'فایربیس', 'AWS', 'طراحی رابط کاربری'
     ],
     'experience': [
       {
-        'title': 'Senior Software Engineer',
-        'company': 'Tech Innovations Inc.',
-        'duration': 'Jan 2020 - Present',
-        'description': 'Leading mobile development team and implementing AI features.',
+        'title': 'مهندس نرم‌افزار ارشد',
+        'company': 'شرکت نوآوری‌های فناوری',
+        'duration': 'ژانویه ۲۰۲۰ - تاکنون',
+        'description': 'رهبری تیم توسعه موبایل و پیاده‌سازی ویژگی‌های هوش مصنوعی.',
       },
       {
-        'title': 'Mobile Developer',
-        'company': 'Digital Solutions Ltd.',
-        'duration': 'Mar 2017 - Dec 2019',
-        'description': 'Developed cross-platform mobile applications using Flutter and React Native.',
+        'title': 'توسعه‌دهنده موبایل',
+        'company': 'راهکارهای دیجیتال',
+        'duration': 'مارس ۲۰۱۷ - دسامبر ۲۰۱۹',
+        'description': 'توسعه اپلیکیشن‌های چندسکویی با استفاده از فلاتر و ری‌اکت نیتیو.',
       }
     ],
     'education': [
       {
-        'degree': 'Master of Computer Science',
-        'school': 'University of Tehran',
-        'duration': '2015 - 2017',
+        'degree': 'کارشناسی ارشد علوم کامپیوتر',
+        'school': 'دانشگاه تهران',
+        'duration': '۲۰۱۵ - ۲۰۱۷',
       },
       {
-        'degree': 'Bachelor of Software Engineering',
-        'school': 'Sharif University of Technology',
-        'duration': '2011 - 2015',
+        'degree': 'کارشناسی مهندسی نرم‌افزار',
+        'school': 'دانشگاه صنعتی شریف',
+        'duration': '۲۰۱۱ - ۲۰۱۵',
       }
     ]
   };
@@ -55,12 +55,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     {
       'id': '1',
       'user': {
-        'name': 'John Doe',
+        'name': 'جان دو',
         'avatar': null,
-        'title': 'Senior Software Engineer',
+        'title': 'مهندس نرم‌افزار ارشد',
       },
-      'timeAgo': '3d',
-      'content': 'Excited to share that I\'ve just completed a new project integrating AI with Flutter! #Flutter #AI #MobileDevelopment',
+      'timeAgo': '۳ روز',
+      'content': 'خوشحالم که به اشتراک می‌گذارم که به تازگی یک پروژه جدید ادغام هوش مصنوعی با فلاتر را تکمیل کرده‌ام! #فلاتر #هوش_مصنوعی #توسعه_موبایل',
       'likes': 78,
       'comments': 15,
       'hasImage': true,
@@ -68,12 +68,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     {
       'id': '2',
       'user': {
-        'name': 'John Doe',
+        'name': 'جان دو',
         'avatar': null,
-        'title': 'Senior Software Engineer',
+        'title': 'مهندس نرم‌افزار ارشد',
       },
-      'timeAgo': '1w',
-      'content': 'Just published my article on "Best Practices for AI Integration in Mobile Apps". Check it out and let me know your thoughts!',
+      'timeAgo': '۱ هفته',
+      'content': 'به تازگی مقاله خود درباره "بهترین شیوه‌های ادغام هوش مصنوعی در اپلیکیشن‌های موبایل" را منتشر کرده‌ام. آن را بررسی کنید و نظر خود را به من بگویید!',
       'likes': 124,
       'comments': 32,
       'hasImage': false,
@@ -105,7 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               elevation: 0,
               title: Text(
-                'Profile',
+                'پروفایل',
                 style: TextStyle(
                   color: AppTheme.secondaryColor,
                   fontWeight: FontWeight.bold,
@@ -143,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           Expanded(
             child: ElevatedButton.icon(
               icon: Icon(Icons.edit),
-              label: Text('Edit Profile'),
+              label: Text('ویرایش پروفایل'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
@@ -158,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           Expanded(
             child: OutlinedButton.icon(
               icon: Icon(Icons.people_outline),
-              label: Text('Find Similar'),
+              label: Text('یافتن افراد مشابه'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppTheme.primaryColor,
                 side: BorderSide(color: AppTheme.primaryColor),
@@ -187,9 +187,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         unselectedLabelColor: AppTheme.lightTextColor,
         indicatorColor: AppTheme.primaryColor,
         tabs: [
-          Tab(text: 'Posts'),
-          Tab(text: 'About'),
-          Tab(text: 'Activity'),
+          Tab(text: 'پست‌ها'),
+          Tab(text: 'درباره'),
+          Tab(text: 'فعالیت'),
         ],
       ),
     );
@@ -219,12 +219,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionTitle('About'),
+                _buildSectionTitle('درباره'),
                 SizedBox(height: 8),
                 Text(_userData['about']),
                 SizedBox(height: 24),
 
-                _buildSectionTitle('Skills'),
+                _buildSectionTitle('مهارت‌ها'),
                 SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -235,14 +235,14 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 ),
                 SizedBox(height: 24),
 
-                _buildSectionTitle('Experience'),
+                _buildSectionTitle('تجربه'),
                 SizedBox(height: 8),
                 ..._userData['experience'].map((exp) {
                   return _buildExperienceItem(exp);
                 }).toList(),
                 SizedBox(height: 24),
 
-                _buildSectionTitle('Education'),
+                _buildSectionTitle('تحصیلات'),
                 SizedBox(height: 8),
                 ..._userData['education'].map((edu) {
                   return _buildEducationItem(edu);
@@ -253,7 +253,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
           // Activity Tab
           Center(
-            child: Text('No recent activity'),
+            child: Text('فعالیت اخیری وجود ندارد'),
           ),
         ],
       ),

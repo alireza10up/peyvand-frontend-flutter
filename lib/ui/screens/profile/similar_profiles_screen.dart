@@ -24,51 +24,51 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
       _profiles.addAll([
         {
           'id': '1',
-          'name': 'Emily Zhang',
-          'title': 'Senior Mobile Developer',
-          'company': 'TechGrowth Inc.',
+          'name': 'امیلی ژانگ',
+          'title': 'توسعه‌دهنده ارشد موبایل',
+          'company': 'تک‌گروث',
           'matchScore': 92,
-          'commonSkills': ['Flutter', 'Mobile Development', 'Firebase'],
+          'commonSkills': ['فلاتر', 'توسعه موبایل', 'فایربیس'],
           'avatar': null,
           'isConnected': false,
         },
         {
           'id': '2',
-          'name': 'Alex Johnson',
-          'title': 'Lead Software Engineer',
-          'company': 'InnovateTech',
+          'name': 'الکس جانسون',
+          'title': 'مهندس نرم‌افزار ارشد',
+          'company': 'اینوویت‌تک',
           'matchScore': 87,
-          'commonSkills': ['React Native', 'JavaScript', 'AWS'],
+          'commonSkills': ['ری‌اکت نیتیو', 'جاوااسکریپت', 'AWS'],
           'avatar': null,
           'isConnected': true,
         },
         {
           'id': '3',
-          'name': 'Sara Ahmadi',
-          'title': 'AI Integration Specialist',
-          'company': 'DataMinds Co.',
+          'name': 'سارا احمدی',
+          'title': 'متخصص ادغام هوش مصنوعی',
+          'company': 'دیتامایندز',
           'matchScore': 85,
-          'commonSkills': ['Machine Learning', 'Python', 'AI'],
+          'commonSkills': ['یادگیری ماشین', 'پایتون', 'هوش مصنوعی'],
           'avatar': null,
           'isConnected': false,
         },
         {
           'id': '4',
-          'name': 'Michael Chen',
-          'title': 'Full Stack Developer',
-          'company': 'WebSolutions Ltd.',
+          'name': 'مایکل چن',
+          'title': 'توسعه‌دهنده فول‌استک',
+          'company': 'وب‌سولوشنز',
           'matchScore': 78,
-          'commonSkills': ['Node.js', 'JavaScript', 'UI/UX'],
+          'commonSkills': ['نود.جی‌اس', 'جاوااسکریپت', 'رابط کاربری'],
           'avatar': null,
           'isConnected': false,
         },
         {
           'id': '5',
-          'name': 'Priya Patel',
-          'title': 'Mobile App Architect',
-          'company': 'MobileFirst Solutions',
+          'name': 'پریا پاتل',
+          'title': 'معمار اپلیکیشن موبایل',
+          'company': 'موبایل‌فرست',
           'matchScore': 76,
-          'commonSkills': ['Flutter', 'Firebase', 'UI/UX Design'],
+          'commonSkills': ['فلاتر', 'فایربیس', 'طراحی رابط کاربری'],
           'avatar': null,
           'isConnected': false,
         },
@@ -82,7 +82,7 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Similar Professionals',
+          'متخصصان مشابه',
           style: TextStyle(
             color: AppTheme.secondaryColor,
             fontWeight: FontWeight.bold,
@@ -115,7 +115,7 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
           ),
           SizedBox(height: 24),
           Text(
-            'Finding similar professionals...',
+            'در حال یافتن متخصصان مشابه...',
             style: TextStyle(
               fontSize: 16,
               color: AppTheme.secondaryColor,
@@ -123,7 +123,7 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Our AI is analyzing skills and experiences',
+            'هوش مصنوعی ما در حال تحلیل مهارت‌ها و تجربیات است',
             style: TextStyle(
               color: AppTheme.lightTextColor,
             ),
@@ -177,7 +177,7 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
               ),
               SizedBox(width: 8),
               Text(
-                'AI Insight',
+                'بینش هوش مصنوعی',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -188,7 +188,7 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'We found 5 professionals with similar skills and experience. Connecting with them could expand your network in the Mobile Development and AI fields.',
+            'ما ۵ متخصص با مهارت‌ها و تجربیات مشابه پیدا کردیم. ارتباط با آنها می‌تواند شبکه شما را در زمینه‌های توسعه موبایل و هوش مصنوعی گسترش دهد.',
             style: TextStyle(
               color: Colors.white,
               fontSize: 14,
@@ -278,7 +278,7 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
                           ),
                         ),
                         Text(
-                          'match',
+                          'تطابق',
                           style: TextStyle(
                             fontSize: 10,
                             color: AppTheme.primaryColor,
@@ -292,7 +292,7 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
             ),
             SizedBox(height: 16),
             Text(
-              'Common Skills:',
+              'مهارت‌های مشترک:',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -325,7 +325,7 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'AI suggests: "Great potential for collaboration"',
+                  'پیشنهاد هوش مصنوعی: "پتانسیل عالی برای همکاری"',
                   style: TextStyle(
                     color: AppTheme.lightTextColor,
                     fontSize: 12,
@@ -343,7 +343,7 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                   ),
                   child: Text(
-                    'Connected',
+                    'متصل شده',
                     style: TextStyle(
                       color: Colors.grey.shade700,
                       fontSize: 12,
@@ -364,7 +364,7 @@ class _SimilarProfilesScreenState extends State<SimilarProfilesScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                   ),
                   child: Text(
-                    'Connect',
+                    'ارتباط',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,

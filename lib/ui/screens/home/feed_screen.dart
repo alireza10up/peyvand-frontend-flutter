@@ -13,12 +13,12 @@ class _FeedScreenState extends State<FeedScreen> {
     {
       'id': '1',
       'user': {
-        'name': 'Sarah Johnson',
+        'name': 'سارا جانسون',
         'avatar': null,
-        'title': 'Product Manager at TechCorp',
+        'title': 'مدیر محصول در شرکت تک‌کورپ',
       },
-      'timeAgo': '2h',
-      'content': 'Excited to announce that we\'ve just launched our new AI-powered feature that helps teams collaborate better! #ProductManagement #AI #Innovation',
+      'timeAgo': '۲ ساعت',
+      'content': 'خوشحالم که اعلام کنم ما به تازگی قابلیت جدید مبتنی بر هوش مصنوعی را راه‌اندازی کرده‌ایم که به تیم‌ها کمک می‌کند بهتر همکاری کنند! #مدیریت_محصول #هوش_مصنوعی #نوآوری',
       'likes': 128,
       'comments': 32,
       'hasImage': true,
@@ -26,12 +26,12 @@ class _FeedScreenState extends State<FeedScreen> {
     {
       'id': '2',
       'user': {
-        'name': 'Alex Chen',
+        'name': 'علی چن',
         'avatar': null,
-        'title': 'Software Engineer',
+        'title': 'مهندس نرم‌افزار',
       },
-      'timeAgo': '5h',
-      'content': 'Just finished a fascinating course on advanced machine learning algorithms. Looking forward to applying these concepts in my next project! Anyone here working on similar tech?',
+      'timeAgo': '۵ ساعت',
+      'content': 'به تازگی یک دوره جذاب درباره الگوریتم‌های پیشرفته یادگیری ماشین را تمام کردم. مشتاقم این مفاهیم را در پروژه بعدی خود به کار بگیرم! آیا کسی اینجا روی فناوری مشابهی کار می‌کند؟',
       'likes': 95,
       'comments': 18,
       'hasImage': false,
@@ -39,12 +39,12 @@ class _FeedScreenState extends State<FeedScreen> {
     {
       'id': '3',
       'user': {
-        'name': 'Priya Patel',
+        'name': 'پریا پاتل',
         'avatar': null,
-        'title': 'UX Researcher',
+        'title': 'محقق تجربه کاربری',
       },
-      'timeAgo': '1d',
-      'content': 'Here are my key takeaways from yesterday\'s UX conference:\n\n1. User research should start earlier in the product cycle\n2. Accessibility is not optional\n3. Qualitative data matters as much as quantitative\n\nWhat are your thoughts? #UXDesign #ProductDevelopment',
+      'timeAgo': '۱ روز',
+      'content': 'نکات کلیدی من از کنفرانس تجربه کاربری دیروز:\n\n۱. تحقیق کاربر باید زودتر در چرخه محصول آغاز شود\n۲. دسترس‌پذیری اختیاری نیست\n۳. داده‌های کیفی به اندازه داده‌های کمی اهمیت دارند\n\nنظر شما چیست؟ #طراحی_تجربه_کاربری #توسعه_محصول',
       'likes': 215,
       'comments': 47,
       'hasImage': true,
@@ -58,7 +58,7 @@ class _FeedScreenState extends State<FeedScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Peyvand',
+          'پیوند',
           style: TextStyle(
             color: AppTheme.primaryColor,
             fontWeight: FontWeight.bold,
@@ -152,7 +152,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  index == 0 ? 'Your Story' : 'User ${String.fromCharCode(65 + index)}',
+                  index == 0 ? 'استوری شما' : 'کاربر ${String.fromCharCode(65 + index)}',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: index == 0 ? FontWeight.bold : FontWeight.normal,

@@ -17,8 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     FeedScreen(),
-    Center(child: Text('Network')),  // Placeholder for Network screen
-    Center(child: Text('Create Post')),  // Placeholder for Create Post screen
+    Center(child: Text('شبکه')),  // Placeholder for Network screen
+    Center(child: Text('ایجاد پست')),  // Placeholder for Create Post screen
     ChatListScreen(),
     ProfileScreen(),
   ];
@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () => Navigator.pop(context),
                 ),
                 Text(
-                  'Create Post',
+                  'ایجاد پست',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.pop(context);
                   },
                   child: Text(
-                    'Post',
+                    'ارسال',
                     style: TextStyle(
                       color: AppTheme.primaryColor,
                       fontWeight: FontWeight.bold,
@@ -113,14 +113,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'John Doe',
+                      'جان دو',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
                     Text(
-                      'Software Engineer',
+                      'مهندس نرم‌افزار',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppTheme.lightTextColor,
@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: TextField(
                 maxLines: null,
                 decoration: InputDecoration(
-                  hintText: "What's on your mind?",
+                  hintText: "چه چیزی در ذهن دارید؟",
                   border: InputBorder.none,
                 ),
               ),
@@ -166,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 ElevatedButton.icon(
                   icon: Icon(Icons.auto_fix_high),
-                  label: Text('AI Enhance'),
+                  label: Text('بهبود با هوش مصنوعی'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
                   ),

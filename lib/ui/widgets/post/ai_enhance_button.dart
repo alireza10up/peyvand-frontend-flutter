@@ -26,7 +26,7 @@ class AiEnhanceButton extends StatelessWidget {
             ),
             SizedBox(width: 4),
             Text(
-              'AI Enhance',
+              'بهبود هوش مصنوعی',
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,

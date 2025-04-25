@@ -14,6 +14,31 @@ class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     primaryColor: primaryColor,
     scaffoldBackgroundColor: backgroundColor,
+    fontFamily: 'Vazir',
+    textTheme: TextTheme(
+      displayLarge: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        color: secondaryColor,
+        fontFamily: 'Vazir',
+      ),
+      displayMedium: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: secondaryColor,
+        fontFamily: 'Vazir',
+      ),
+      bodyLarge: TextStyle(
+        fontSize: 16,
+        color: secondaryColor,
+        fontFamily: 'Vazir',
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 14,
+        color: secondaryColor,
+        fontFamily: 'Vazir',
+      ),
+    ),
     colorScheme: ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryColor,
@@ -55,31 +80,6 @@ class AppTheme {
       filled: true,
       fillColor: Colors.white,
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    ),
-    textTheme: TextTheme(
-      displayLarge: TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: textColor,
-      ),
-      displayMedium: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: textColor,
-      ),
-      displaySmall: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: textColor,
-      ),
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        color: textColor,
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        color: textColor,
-      ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Colors.white,

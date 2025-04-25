@@ -23,27 +23,27 @@ class BottomNav extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),
           activeIcon: Icon(Icons.home),
-          label: 'Home',
+          label: 'خانه',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.people_outline),
           activeIcon: Icon(Icons.people),
-          label: 'Network',
+          label: 'شبکه',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.add_circle_outline, size: 30),
           activeIcon: Icon(Icons.add_circle, size: 30),
-          label: 'Post',
+          label: 'پست',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.chat_bubble_outline),
           activeIcon: Icon(Icons.chat_bubble),
-          label: 'Chat',
+          label: 'گفتگو',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
           activeIcon: Icon(Icons.person),
-          label: 'Profile',
+          label: 'پروفایل',
         ),
       ],
     );
