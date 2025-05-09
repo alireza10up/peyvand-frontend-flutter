@@ -1,48 +1,37 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Colors
+  // رنگ‌های اصلی
   static const Color primaryColor = Color(0xFFFF7D00); // Orange
-  static const Color secondaryColor = Color(0xFF2A2A2A);
-  static const Color accentColor = Color(0xFF4ECDC4);
-  static const Color backgroundColor = Color(0xFFF9F9F9);
+  static const Color secondaryColor = Color(0xFF505050); // خاکستری تیره
+  static const Color accentColor = Color(0xFF4ECDC4); // Cyan/Teal
+  static const Color backgroundColor = Color(0xFFF6F6F9); // روشن
+  static const Color backgroundColorDark = Color(0xFF101014); // دارک دارک واقعی
+  static const Color surfaceColor = Color(0xFFFFFFFF); // کارت، اینپوت (لایت)
+  static const Color surfaceColorDark = Color(0xFF19191F); // کارت، اینپوت (دارک)
   static const Color errorColor = Color(0xFFFF6B6B);
-  static const Color textColor = Color(0xFF333333);
-  static const Color lightTextColor = Color(0xFF777777);
 
-  // Light Theme
+  // رنگ متن و متن روشن (برای استفاده در کل پروژه)
+  static const Color textColor = Color(0xFF222222); // متن اصلی (لایت)
+  static const Color textColorDark = Color(0xFFF1F1F1); // متن اصلی (دارک)
+  static const Color lightTextColor = Color(0xFF888888); // متن کم‌رنگ (لایت و دارک)
+  static const Color hintColorDark = Color(0xFF757585); // hint در دارک
+
+  // تم روشن
   static final ThemeData lightTheme = ThemeData(
+    fontFamily: 'Vazir',
     primaryColor: primaryColor,
     scaffoldBackgroundColor: backgroundColor,
-    fontFamily: 'Vazir',
-    textTheme: TextTheme(
-      displayLarge: TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: secondaryColor,
-        fontFamily: 'Vazir',
-      ),
-      displayMedium: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-        color: secondaryColor,
-        fontFamily: 'Vazir',
-      ),
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        color: secondaryColor,
-        fontFamily: 'Vazir',
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        color: secondaryColor,
-        fontFamily: 'Vazir',
-      ),
-    ),
     colorScheme: ColorScheme.light(
       primary: primaryColor,
-      secondary: secondaryColor,
+      secondary: accentColor,
+      background: backgroundColor,
+      surface: surfaceColor,
       error: errorColor,
+      onPrimary: Colors.white,
+      onBackground: textColor,
+      onSurface: textColor,
+      onError: Colors.white,
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: primaryColor,
@@ -52,6 +41,7 @@ class AppTheme {
         color: Colors.white,
         fontSize: 20,
         fontWeight: FontWeight.bold,
+        fontFamily: 'Vazir',
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -78,36 +68,70 @@ class AppTheme {
         borderSide: BorderSide(color: errorColor, width: 1),
       ),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: surfaceColor,
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      hintStyle: TextStyle(color: lightTextColor, fontFamily: 'Vazir'),
+      labelStyle: TextStyle(color: lightTextColor, fontFamily: 'Vazir'),
     ),
+    textTheme: TextTheme(
+      displayLarge: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        color: textColor,
+        fontFamily: 'Vazir',
+      ),
+      displayMedium: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: textColor,
+        fontFamily: 'Vazir',
+      ),
+      bodyLarge: TextStyle(
+        fontSize: 16,
+        color: textColor,
+        fontFamily: 'Vazir',
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 14,
+        color: lightTextColor,
+        fontFamily: 'Vazir',
+      ),
+    ),
+    cardColor: surfaceColor,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: Colors.white,
+      backgroundColor: surfaceColor,
       selectedItemColor: primaryColor,
-      unselectedItemColor: Colors.grey,
+      unselectedItemColor: lightTextColor,
       type: BottomNavigationBarType.fixed,
       elevation: 10,
     ),
   );
 
-  // Dark Theme
+  // تم دارک
   static final ThemeData darkTheme = ThemeData(
+    fontFamily: 'Vazir',
     primaryColor: primaryColor,
-    scaffoldBackgroundColor: Color(0xFF121212),
+    scaffoldBackgroundColor: backgroundColorDark,
     colorScheme: ColorScheme.dark(
       primary: primaryColor,
       secondary: accentColor,
+      background: backgroundColorDark,
+      surface: surfaceColorDark,
       error: errorColor,
-      surface: Color(0xFF1E1E1E),
+      onPrimary: Colors.white,
+      onBackground: textColorDark,
+      onSurface: textColorDark,
+      onError: Colors.white,
     ),
     appBarTheme: AppBarTheme(
-      backgroundColor: Color(0xFF1E1E1E),
+      backgroundColor: surfaceColorDark,
       elevation: 0,
       iconTheme: IconThemeData(color: Colors.white),
       titleTextStyle: TextStyle(
         color: Colors.white,
         fontSize: 20,
         fontWeight: FontWeight.bold,
+        fontFamily: 'Vazir',
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -123,7 +147,7 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey.shade700),
+        borderSide: BorderSide(color: Color(0xFF232334)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
@@ -134,38 +158,40 @@ class AppTheme {
         borderSide: BorderSide(color: errorColor, width: 1),
       ),
       filled: true,
-      fillColor: Color(0xFF2A2A2A),
+      fillColor: surfaceColorDark,
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      hintStyle: TextStyle(color: lightTextColor, fontFamily: 'Vazir'),
+      labelStyle: TextStyle(color: lightTextColor, fontFamily: 'Vazir'),
     ),
     textTheme: TextTheme(
       displayLarge: TextStyle(
         fontSize: 28,
         fontWeight: FontWeight.bold,
-        color: Colors.white,
+        color: textColorDark,
+        fontFamily: 'Vazir',
       ),
       displayMedium: TextStyle(
         fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      ),
-      displaySmall: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
+        fontWeight: FontWeight.w600,
+        color: textColorDark,
+        fontFamily: 'Vazir',
       ),
       bodyLarge: TextStyle(
         fontSize: 16,
-        color: Colors.white,
+        color: textColorDark,
+        fontFamily: 'Vazir',
       ),
       bodyMedium: TextStyle(
         fontSize: 14,
-        color: Colors.white70,
+        color: lightTextColor,
+        fontFamily: 'Vazir',
       ),
     ),
+    cardColor: surfaceColorDark,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFF1E1E1E),
+      backgroundColor: surfaceColorDark,
       selectedItemColor: primaryColor,
-      unselectedItemColor: Colors.grey,
+      unselectedItemColor: lightTextColor,
       type: BottomNavigationBarType.fixed,
       elevation: 10,
     ),

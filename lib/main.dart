@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'پیوند',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      // darkTheme: AppTheme.darkTheme,
       initialRoute: Routes.splash,
       onGenerateRoute: Routes.generateRoute,
       localizationsDelegates: [

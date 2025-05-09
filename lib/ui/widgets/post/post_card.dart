@@ -111,11 +111,11 @@ class PostCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              _actionButton(Icons.thumb_up_outlined, 'پسندیدن'),
+              _actionButton(Icons.thumb_up_outlined, ''),
               SizedBox(width: 16),
-              _actionButton(Icons.comment_outlined, 'نظر'),
+              _actionButton(Icons.comment_outlined, ''),
               SizedBox(width: 16),
-              _actionButton(Icons.share_outlined, 'اشتراک‌گذاری'),
+              _actionButton(Icons.share_outlined, ''),
             ],
           ),
           AiEnhanceButton(

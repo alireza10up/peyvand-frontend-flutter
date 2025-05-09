@@ -421,7 +421,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       ),
                       SizedBox(width: 16),
                       Text(
-                        'پسندیدن',
+                        '',
                         style: TextStyle(
                           color: AppTheme.lightTextColor,
                           fontSize: 12,
@@ -430,7 +430,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       ),
                       SizedBox(width: 16),
                       Text(
-                        'پاسخ',
+                        '',
                         style: TextStyle(
                           color: AppTheme.lightTextColor,
                           fontSize: 12,
