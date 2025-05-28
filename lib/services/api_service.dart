@@ -68,10 +68,11 @@ class ApiService {
     }
   }
 
-  Future<dynamic> post(String endpoint,
-      Map<String, dynamic> body, {
-        bool includeAuth = true,
-      }) async {
+  Future<dynamic> post(
+    String endpoint,
+    Map<String, dynamic> body, {
+    bool includeAuth = true,
+  }) async {
     final url = Uri.parse('$_baseUrl$endpoint');
     final headers = await _getHeaders(includeAuth: includeAuth);
     try {
@@ -83,16 +84,17 @@ class ApiService {
       return _handleResponse(response);
     } catch (e) {
       if (e is ApiException) {
-        throw Exception(e.toString());
-      };
+        rethrow;
+      }
       throw Exception('خطا در برقراری ارتباط با سرور: $e');
     }
   }
 
-  Future<dynamic> patch(String endpoint,
-      Map<String, dynamic> body, {
-        bool includeAuth = true,
-      }) async {
+  Future<dynamic> patch(
+    String endpoint,
+    Map<String, dynamic> body, {
+    bool includeAuth = true,
+  }) async {
     final url = Uri.parse('$_baseUrl$endpoint');
     final headers = await _getHeaders(includeAuth: includeAuth);
     try {
@@ -108,11 +110,12 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> uploadFile(String endpoint,
-      File file, {
-        String fieldName = 'file',
-        String? mimeType,
-      }) async {
+  Future<Map<String, dynamic>> uploadFile(
+    String endpoint,
+    File file, {
+    String fieldName = 'file',
+    String? mimeType,
+  }) async {
     final url = Uri.parse('$_baseUrl$endpoint');
     final headers = await _getHeaders(includeAuth: true, isMultipart: true);
 

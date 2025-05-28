@@ -18,15 +18,14 @@ class AuthService {
         'password': password,
       }, includeAuth: false);
 
-      final responseData = jsonDecode(response.body);
-      if (responseData['accessToken'] != null) {
-        await _tokenManager.saveToken(responseData['accessToken']);
+      if (response['accessToken'] != null) {
+        await _tokenManager.saveToken(response['accessToken']);
         return {'success': true, 'message': 'ورود موفقیت آمیز بود.'};
       } else {
         return {'success': false, 'message': 'پاسخ سرور نامعتبر است.'};
       }
     } catch (e) {
-      return {'success': false, 'message': e};
+      return {'success': false, 'message': e.toString()};
     }
   }
 
@@ -40,15 +39,14 @@ class AuthService {
         'password': password,
       }, includeAuth: false);
 
-      final responseData = jsonDecode(response.body);
-      if (responseData['accessToken'] != null) {
-        await _tokenManager.saveToken(responseData['accessToken']);
+      if (response['accessToken'] != null) {
+        await _tokenManager.saveToken(response['accessToken']);
         return {'success': true, 'message': 'خوش آمدید.'};
       } else {
         return {'success': false, 'message': 'پاسخ سرور نامعتبر است.'};
       }
     } catch (e) {
-      return {'success': false, 'message': e};
+      return {'success': false, 'message': e.toString()};
     }
   }
 

@@ -64,7 +64,7 @@ class _LoginFormState extends State<LoginForm> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('یک خطای پیش‌بینی نشده رخ داد: $e'),
+          content: Text('|یک خطای پیش‌بینی نشده رخ داد: $e'),
           backgroundColor: Theme.of(context).colorScheme.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
