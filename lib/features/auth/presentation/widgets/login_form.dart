@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:peyvand/services/auth_service.dart';
-import 'package:peyvand/features/home/presentation/screens/home_screen.dart';
+import 'package:peyvand/features/auth/data/services/auth_service.dart';
+import 'package:peyvand/features/main/presentation/screens/main_tab_screen.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -46,7 +46,7 @@ class _LoginFormState extends State<LoginForm> {
           ),
         );
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const MainTabScreen()),
               (Route<dynamic> route) => false,
         );
       } else {
@@ -64,7 +64,7 @@ class _LoginFormState extends State<LoginForm> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('یک خطای پیش‌بینی نشده رخ داد: $e'),
+          content: Text('|یک خطای پیش‌بینی نشده رخ داد: $e'),
           backgroundColor: Theme.of(context).colorScheme.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
