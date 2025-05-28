@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:peyvand/config/app_assets.dart';
-import 'package:peyvand/config/app_theme.dart';
 import '../widgets/login_form.dart';
 import '../widgets/register_form.dart';
 
