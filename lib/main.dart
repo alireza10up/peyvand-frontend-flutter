@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:peyvand/features/auth/presentation/screens/auth_screen.dart';
 import 'package:peyvand/features/home/presentation/screens/home_screen.dart';
-import 'package:peyvand/services/auth_service.dart';
+import 'package:peyvand/features/auth/data/services/auth_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'features/main/presentation/screens/main_tab_screen.dart';
 
 void main() {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -60,7 +62,7 @@ class MyApp extends StatelessWidget {
             );
           } else {
             if (snapshot.hasData && snapshot.data == true) {
-              return const HomeScreen();
+              return const MainTabScreen();
             } else {
               return const AuthScreen();
             }

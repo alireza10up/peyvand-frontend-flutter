@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:peyvand/services/auth_service.dart';
-import 'package:peyvand/features/home/presentation/screens/home_screen.dart';
+import 'package:peyvand/features/auth/data/services/auth_service.dart';
+import 'package:peyvand/features/main/presentation/screens/main_tab_screen.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -52,7 +52,7 @@ class _RegisterFormState extends State<RegisterForm> {
           ),
         );
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const MainTabScreen()),
               (Route<dynamic> route) => false,
         );
       } else {

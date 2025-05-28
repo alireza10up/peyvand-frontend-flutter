@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:peyvand/services/auth_service.dart';
+import 'package:peyvand/features/auth/data/services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();

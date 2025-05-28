@@ -1,4 +1,8 @@
+import 'package:http_parser/http_parser.dart';
+
+import '../errors/api_exception.dart';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:peyvand/helpers/token_manager.dart';
 
@@ -6,9 +10,12 @@ class ApiService {
   final String _baseUrl = 'http://154.16.16.2:9090';
   final TokenManager _tokenManager = TokenManager();
 
-  Future<Map<String, String>> _getHeaders({bool includeAuth = true}) async {
+  Future<Map<String, String>> _getHeaders({
+    bool includeAuth = true,
+    bool isMultipart = false,
+  }) async {
     final headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
+      if (!isMultipart) 'Content-Type': 'application/json; charset=UTF-8',
       'Accept': 'application/json',
     };
     if (includeAuth) {
@@ -20,17 +27,48 @@ class ApiService {
     return headers;
   }
 
-  Future<http.Response> get(String endpoint, {bool includeAuth = true}) async {
+  String getBaseUrl() {
+    return _baseUrl;
+  }
+
+  dynamic _handleResponse(http.Response response) {
+    final responseBody = jsonDecode(response.body);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return responseBody;
+    } else {
+      List<String> errorMessages = ['خطای ناشناخته از سرور'];
+      String? errorType = responseBody['error'] as String?;
+
+      if (responseBody['message'] != null) {
+        if (responseBody['message'] is List) {
+          errorMessages = List<String>.from(
+            responseBody['message'].map((m) => m.toString()),
+          );
+        } else if (responseBody['message'] is String) {
+          errorMessages = [responseBody['message'] as String];
+        }
+      }
+      throw ApiException(
+        errorType: errorType,
+        messages: errorMessages,
+        statusCode: response.statusCode,
+      );
+    }
+  }
+
+  Future<dynamic> get(String endpoint, {bool includeAuth = true}) async {
     final url = Uri.parse('$_baseUrl$endpoint');
     final headers = await _getHeaders(includeAuth: includeAuth);
     try {
-      return await http.get(url, headers: headers);
+      final response = await http.get(url, headers: headers);
+      return _handleResponse(response);
     } catch (e) {
+      if (e is ApiException) rethrow;
       throw Exception('خطا در برقراری ارتباط با سرور: $e');
     }
   }
 
-  Future<http.Response> post(
+  Future<dynamic> post(
     String endpoint,
     Map<String, dynamic> body, {
     bool includeAuth = true,
@@ -38,13 +76,21 @@ class ApiService {
     final url = Uri.parse('$_baseUrl$endpoint');
     final headers = await _getHeaders(includeAuth: includeAuth);
     try {
-      return await http.post(url, headers: headers, body: jsonEncode(body));
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      return _handleResponse(response);
     } catch (e) {
+      if (e is ApiException) {
+        rethrow;
+      }
       throw Exception('خطا در برقراری ارتباط با سرور: $e');
     }
   }
 
-  Future<http.Response> patch(
+  Future<dynamic> patch(
     String endpoint,
     Map<String, dynamic> body, {
     bool includeAuth = true,
@@ -52,22 +98,68 @@ class ApiService {
     final url = Uri.parse('$_baseUrl$endpoint');
     final headers = await _getHeaders(includeAuth: includeAuth);
     try {
-      return await http.patch(url, headers: headers, body: jsonEncode(body));
+      final response = await http.patch(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      return _handleResponse(response);
     } catch (e) {
+      if (e is ApiException) rethrow;
       throw Exception('خطا در برقراری ارتباط با سرور: $e');
     }
   }
 
-  Future<http.Response> delete(
-    String endpoint, {
-    bool includeAuth = true,
+  Future<Map<String, dynamic>> uploadFile(
+    String endpoint,
+    File file, {
+    String fieldName = 'file',
+    String? mimeType,
   }) async {
     final url = Uri.parse('$_baseUrl$endpoint');
-    final headers = await _getHeaders(includeAuth: includeAuth);
+    final headers = await _getHeaders(includeAuth: true, isMultipart: true);
+
     try {
-      return await http.delete(url, headers: headers);
+      var request = http.MultipartRequest('POST', url);
+      request.headers.addAll(headers);
+
+      MediaType? contentType;
+      if (mimeType != null && mimeType.isNotEmpty) {
+        try {
+          contentType = MediaType.parse(mimeType);
+        } catch (e) {
+          print(
+            'فرمت mimeType نامعتبر است: $mimeType، آپلود بدون contentType صریح برای فایل انجام می‌شود.',
+          );
+        }
+      }
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          fieldName,
+          file.path,
+          contentType: contentType,
+        ),
+      );
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      final dynamic handledResponse = _handleResponse(response);
+      if (handledResponse['id'] != null && handledResponse['url'] != null) {
+        return {
+          'success': true,
+          'id': handledResponse['id'],
+          'relativeUrl': handledResponse['url'],
+        };
+      } else {
+        throw ApiException(
+          messages: ['پاسخ سرور پس از آپلود شامل ID یا URL فایل نبود.'],
+        );
+      }
     } catch (e) {
-      throw Exception('خطا در برقراری ارتباط با سرور: $e');
+      if (e is ApiException) rethrow;
+      throw Exception('خطا در ارتباط با سرور هنگام آپلود: $e');
     }
   }
 }
