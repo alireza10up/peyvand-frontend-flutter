@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // رنگ‌های اصلی بر اساس UI Kit
-  static const Color primaryColor = Color(0xFF4A90E2); // آبی دانشگاهی [cite: 3, 109]
-  static const Color accentColor = Color(0xFFF5A623);  // نارنجی دوستانه [cite: 3, 110]
+  static const Color primaryColor = Color(0xFF4A90E2);
+  static const Color accentColor = Color(0xFFF5A623);
 
-  // رنگ‌های خنثی و متن بر اساس UI Kit
-  static const Color scaffoldBackgroundColor = Color(0xFFF4F6F8); // یا سفید #FFFFFF
+  static const Color scaffoldBackgroundColor = Color(0xFFF4F6F8);
   static const Color cardBackgroundColor = Color(0xFFFFFFFF);
   static const Color primaryTextColor = Color(0xFF333333);
   static const Color secondaryTextColor = Color(0xFF757575);
   static const Color dividerColor = Color(0xFFE0E0E0);
-  static const Color errorColor = Color(0xFFFF6B6B); // رنگ خطا (می‌تواند از UI Kit یا یک استاندارد باشد)
+  static const Color errorColor = Color(0xFFFF6B6B);
 
-  // رنگ متن و متن روشن (برای استفاده در کل پروژه) - قبلی
   // static const Color textColor = Color(0xFF222222);
   // static const Color textColorDark = Color(0xFFF1F1F1);
-  // static const Color lightTextColor = Color(0xFF888888); // این می‌تواند همان secondaryTextColor باشد
+  // static const Color lightTextColor = Color(0xFF888888);
 
   static final ThemeData lightTheme = ThemeData(
     fontFamily: 'Vazir',
@@ -24,18 +21,18 @@ class AppTheme {
     scaffoldBackgroundColor: scaffoldBackgroundColor,
     colorScheme: ColorScheme.light(
       primary: primaryColor,
-      secondary: accentColor, // استفاده از accentColor به جای secondaryColor در colorScheme
+      secondary: accentColor,
       background: scaffoldBackgroundColor,
       surface: cardBackgroundColor,
       error: errorColor,
-      onPrimary: Colors.white, // متن روی رنگ اصلی
-      onSecondary: Colors.black, // متن روی رنگ تاکیدی
+      onPrimary: Colors.white,
+      onSecondary: Colors.black,
       onBackground: primaryTextColor,
       onSurface: primaryTextColor,
       onError: Colors.white,
     ),
     appBarTheme: AppBarTheme(
-      backgroundColor: primaryColor, // AppBar با رنگ اصلی
+      backgroundColor: primaryColor,
       elevation: 0,
       iconTheme: IconThemeData(color: Colors.white),
       titleTextStyle: TextStyle(
@@ -47,10 +44,10 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor, // دکمه‌های اصلی با رنگ اصلی
+        backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0), // گوشه‌های کمی گرد
+          borderRadius: BorderRadius.circular(8.0),
         ),
         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
       ),
@@ -73,8 +70,8 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8.0), // گوشه‌های کمی گرد
-        borderSide: BorderSide(color: dividerColor), // بوردر با رنگ جداکننده
+        borderRadius: BorderRadius.circular(8.0),
+        borderSide: BorderSide(color: dividerColor),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.0),
@@ -87,37 +84,35 @@ class AppTheme {
       filled: true,
       fillColor: cardBackgroundColor,
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      hintStyle: TextStyle(color: secondaryTextColor, fontFamily: 'Vazir'), // متن راهنما با رنگ متن ثانویه
-      labelStyle: TextStyle(color: secondaryTextColor, fontFamily: 'Vazir'), // لیبل با رنگ متن ثانویه
-      floatingLabelStyle: TextStyle(color: primaryColor), // لیبل شناور با رنگ اصلی
+      hintStyle: TextStyle(color: secondaryTextColor, fontFamily: 'Vazir'),
+      labelStyle: TextStyle(color: secondaryTextColor, fontFamily: 'Vazir'),
+      floatingLabelStyle: TextStyle(color: primaryColor),
     ),
     textTheme: TextTheme(
       displayLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor, fontFamily: 'Vazir'),
       displayMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: primaryTextColor, fontFamily: 'Vazir'),
-      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: primaryTextColor, fontFamily: 'Vazir'), // برای عنوان AppBarها اگر پیش‌فرض کافی نبود
-      bodyLarge: TextStyle(fontSize: 16, color: primaryTextColor, fontFamily: 'Vazir'), // متن اصلی
-      bodyMedium: TextStyle(fontSize: 14, color: secondaryTextColor, fontFamily: 'Vazir'), // متن ثانویه
-      labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white, fontFamily: 'Vazir'), // برای متن دکمه‌های اصلی
+      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: primaryTextColor, fontFamily: 'Vazir'),
+      bodyLarge: TextStyle(fontSize: 16, color: primaryTextColor, fontFamily: 'Vazir'),
+      bodyMedium: TextStyle(fontSize: 14, color: secondaryTextColor, fontFamily: 'Vazir'),
+      labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white, fontFamily: 'Vazir'),
     ),
     cardTheme: CardTheme(
-      elevation: 2, // سایه ملایم برای کارت‌ها
+      elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0), // گوشه‌های گرد کارت‌ها
+        borderRadius: BorderRadius.circular(8.0),
       ),
-      color: cardBackgroundColor, // پس‌زمینه کارت‌ها
+      color: cardBackgroundColor,
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     ),
     iconTheme: IconThemeData(
-      color: primaryTextColor, // رنگ پیش‌فرض آیکون‌ها
+      color: primaryTextColor,
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: cardBackgroundColor, // پس‌زمینه سفید یا رنگ کارت
-      selectedItemColor: primaryColor, // آیتم فعال با رنگ اصلی
-      unselectedItemColor: secondaryTextColor, // آیتم غیرفعال با رنگ متن ثانویه
+      backgroundColor: cardBackgroundColor,
+      selectedItemColor: primaryColor,
+      unselectedItemColor: secondaryTextColor,
       type: BottomNavigationBarType.fixed,
       elevation: 10,
     ),
-    // تم تیره فعلاً مورد نیاز نیست، اما ساختار آن حفظ می‌شود
-    // static final ThemeData darkTheme = ThemeData(...);
   );
 }
