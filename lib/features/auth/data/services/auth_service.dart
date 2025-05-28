@@ -13,30 +13,20 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final response = await _apiService.post(
-        '/auth/signIn',
-        {'email': email, 'password': password},
-        includeAuth: false,
-      );
+      final response = await _apiService.post('/auth/signIn', {
+        'email': email,
+        'password': password,
+      }, includeAuth: false);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData = jsonDecode(response.body);
-        if (responseData['accessToken'] != null) {
-          await _tokenManager.saveToken(responseData['accessToken']);
-          return {'success': true, 'message': 'ورود موفقیت آمیز بود.'};
-        } else {
-          return {'success': false, 'message': 'پاسخ سرور نامعتبر است.'};
-        }
+      final responseData = jsonDecode(response.body);
+      if (responseData['accessToken'] != null) {
+        await _tokenManager.saveToken(responseData['accessToken']);
+        return {'success': true, 'message': 'ورود موفقیت آمیز بود.'};
       } else {
-        final errorData = jsonDecode(response.body);
-        String errorMessage = 'خطا در ورود';
-        if (errorData['message'] != null) {
-          errorMessage = errorData['message'] is List ? errorData['message'].join('\n') : errorData['message'];
-        }
-        return {'success': false, 'message': errorMessage};
+        return {'success': false, 'message': 'پاسخ سرور نامعتبر است.'};
       }
     } catch (e) {
-      return {'success': false, 'message': 'خطا در ارتباط با سرور: $e'};
+      return {'success': false, 'message': e};
     }
   }
 
@@ -45,30 +35,20 @@ class AuthService {
     required String password,
   }) async {
     try {
-      final response = await _apiService.post(
-        '/auth/signUp',
-        {'email': email, 'password': password},
-        includeAuth: false,
-      );
+      final response = await _apiService.post('/auth/signUp', {
+        'email': email,
+        'password': password,
+      }, includeAuth: false);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData = jsonDecode(response.body);
-        if (responseData['accessToken'] != null) {
-          await _tokenManager.saveToken(responseData['accessToken']);
-          return {'success': true, 'message': 'خوش آمدید.'};
-        } else {
-          return {'success': false, 'message': 'پاسخ سرور نامعتبر است.'};
-        }
+      final responseData = jsonDecode(response.body);
+      if (responseData['accessToken'] != null) {
+        await _tokenManager.saveToken(responseData['accessToken']);
+        return {'success': true, 'message': 'خوش آمدید.'};
       } else {
-        final errorData = jsonDecode(response.body);
-        String errorMessage = 'خطا در ثبت نام';
-        if (errorData['message'] != null) {
-          errorMessage = errorData['message'] is List ? errorData['message'].join('\n') : errorData['message'];
-        }
-        return {'success': false, 'message': errorMessage};
+        return {'success': false, 'message': 'پاسخ سرور نامعتبر است.'};
       }
     } catch (e) {
-      return {'success': false, 'message': 'خطا در ارتباط با سرور: $e'};
+      return {'success': false, 'message': e};
     }
   }
 
