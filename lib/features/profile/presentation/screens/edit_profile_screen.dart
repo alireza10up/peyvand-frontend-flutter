@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:peyvand/services/api_service.dart';
 import 'package:peyvand/features/profile/domain/models/user_model.dart';
 import 'package:peyvand/features/profile/data/services/user_service.dart';
@@ -60,20 +61,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _pickImage(ImageSource source) async {
     try {
       final XFile? pickedFile = await _picker.pickImage(source: source, imageQuality: 70, maxWidth: 1024, maxHeight: 1024);
+
       if (pickedFile != null) {
+        String? determinedMimeType = pickedFile.mimeType;
+        print('MIME type directly from image_picker: $determinedMimeType');
+
+        if (determinedMimeType == null || determinedMimeType.isEmpty) {
+          determinedMimeType = lookupMimeType(pickedFile.path);
+          print('MIME type from lookupMimeType fallback: $determinedMimeType');
+        }
+
+        if (determinedMimeType == null || !determinedMimeType.startsWith('image/')) {
+          print('Could not determine a valid image MIME type. Path: ${pickedFile.path}');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('نوع فایل انتخاب شده قابل تشخیص نیست یا یک تصویر معتبر نمی‌باشد.')),
+            );
+          }
+          return;
+        }
+
         setState(() {
           _selectedImageFile = File(pickedFile.path);
-          _selectedImageMimeType = pickedFile.mimeType;
+          _selectedImageMimeType = determinedMimeType;
+          print('Final selected image MIME type: $_selectedImageMimeType');
         });
       }
     } catch (e) {
       if(mounted) {
+        print('Error picking image: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('خطا در انتخاب تصویر: $e')),
         );
       }
     }
   }
+
 
   void _showImageSourceActionSheet(BuildContext context) {
     showModalBottomSheet(
