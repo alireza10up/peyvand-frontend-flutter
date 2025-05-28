@@ -1,190 +1,165 @@
 import 'package:flutter/material.dart';
-import 'package:peyvand/config/app_theme.dart';
 import 'package:peyvand/config/routes.dart';
+import 'package:peyvand/core/providers/auth_provider.dart';
 import 'package:peyvand/ui/widgets/common/custom_button.dart';
 import 'package:peyvand/ui/widgets/common/custom_text_field.dart';
+import 'package:provider/provider.dart';
+import 'package:peyvand/config/app_theme.dart'; // برای دسترسی به AppTheme.accentColor
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  bool _isLoading = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _register() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.register(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
 
-      // Simulate registration
-      Future.delayed(Duration(seconds: 2), () {
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.pushReplacementNamed(context, Routes.home);
-      });
+      if (mounted) {
+        final message = authProvider.authMessage;
+        final isAuthenticated = authProvider.isAuthenticated;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message ?? 'وضعیت نامشخص'),
+            backgroundColor:
+                isAuthenticated ? Colors.green : AppTheme.errorColor,
+          ),
+        );
+
+        authProvider.clearMessage(); // پاک کردن پیام پس از نمایش
+
+        if (isAuthenticated) {
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil(Routes.home, (route) => false);
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: IconThemeData(color: AppTheme.primaryColor),
+        title: const Text('ثبت نام کاربر جدید'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
-      body: SafeArea(
+      body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(20.0),
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // لوگو یا تصویر (اختیاری)
+                // Image.asset(AppAssets.logo, height: 100), //
+                // const SizedBox(height: 30),
+                const Text(
                   'ایجاد حساب کاربری',
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'به جامعه حرفه‌ای ما بپیوندید',
-                  style: TextStyle(
-                    color: AppTheme.lightTextColor,
-                    fontSize: 16,
-                  ),
-                ),
-                SizedBox(height: 32),
-                // Name field
+                const SizedBox(height: 30),
+
                 CustomTextField(
-                  label: 'نام و نام خانوادگی',
-                  hintText: 'نام و نام خانوادگی خود را وارد کنید',
-                  controller: _nameController,
-                  prefixIcon: Icons.person_outline,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'لطفا نام خود را وارد کنید';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                // Email field
-                CustomTextField(
-                  label: 'ایمیل',
-                  hintText: 'ایمیل خود را وارد کنید',
                   controller: _emailController,
+                  labelText: 'ایمیل',
+                  hintText: 'ایمیل خود را وارد کنید',
                   keyboardType: TextInputType.emailAddress,
-                  prefixIcon: Icons.email_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'لطفا ایمیل خود را وارد کنید';
                     }
-                    if (!value.contains('@')) {
+                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                       return 'لطفا یک ایمیل معتبر وارد کنید';
                     }
                     return null;
                   },
+                  prefixIcon: Icons.email_outlined,
                 ),
-                SizedBox(height: 20),
-                // Password field
+                const SizedBox(height: 16),
                 CustomTextField(
-                  label: 'رمز عبور',
-                  hintText: 'یک رمز عبور ایجاد کنید',
                   controller: _passwordController,
-                  isPassword: true,
-                  prefixIcon: Icons.lock_outline,
+                  labelText: 'رمز عبور',
+                  hintText: 'رمز عبور خود را وارد کنید',
+                  obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'لطفا رمز عبور را وارد کنید';
+                      return 'لطفا رمز عبور خود را وارد کنید';
                     }
                     if (value.length < 6) {
+                      // بک‌اند حداقل ۶ کاراکتر می‌خواهد
                       return 'رمز عبور باید حداقل ۶ کاراکتر باشد';
                     }
                     return null;
                   },
-                ),
-                SizedBox(height: 20),
-                // Confirm Password field
-                CustomTextField(
-                  label: 'تایید رمز عبور',
-                  hintText: 'رمز عبور خود را تایید کنید',
-                  controller: _confirmPasswordController,
-                  isPassword: true,
                   prefixIcon: Icons.lock_outline,
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  controller: _confirmPasswordController,
+                  labelText: 'تکرار رمز عبور',
+                  hintText: 'رمز عبور خود را مجددا وارد کنید',
+                  obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'لطفا رمز عبور خود را تایید کنید';
+                      return 'لطفا تکرار رمز عبور را وارد کنید';
                     }
                     if (value != _passwordController.text) {
                       return 'رمزهای عبور مطابقت ندارند';
                     }
                     return null;
                   },
+                  prefixIcon: Icons.lock_reset_outlined,
                 ),
-                SizedBox(height: 24),
-                // Terms and conditions
-                Row(
-                  children: [
-                    Icon(
-                      Icons.check_circle,
-                      color: AppTheme.primaryColor,
-                      size: 20,
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'با ثبت نام، شما با قوانین استفاده از خدمات و سیاست حفظ حریم خصوصی ما موافقت می‌کنید',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.lightTextColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 24),
-                // Register button
-                CustomButton(
-                  text: 'ایجاد حساب کاربری',
-                  isLoading: _isLoading,
-                  onPressed: _register,
-                ),
-                SizedBox(height: 16),
-                // Login link
+                const SizedBox(height: 30),
+                authProvider.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : CustomButton(text: 'ثبت نام', onPressed: _submitForm),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("قبلاً حساب کاربری دارید؟"),
-                    SizedBox(width: 4),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
+                    const Text('قبلاً ثبت نام کرده‌اید؟'),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(
+                          context,
+                        ).pushReplacementNamed(Routes.login);
                       },
                       child: Text(
-                        'ورود',
+                        'وارد شوید',
                         style: TextStyle(
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+                          color: AppTheme.accentColor,
+                        ), // استفاده از رنگ تاکیدی
                       ),
                     ),
                   ],

@@ -47,6 +47,6 @@ class AppAssets {
   static Widget logoMedium({Color? color, Color? backgroundColor}) =>
       getLogoCircle(size: 40, logoColor: color, backgroundColor: backgroundColor, padding: 6);
 
-  static Widget logoLarge({Color? color, Color? backgroundColor}) =>
+  static Widget logoLarge({Color? color, Color? backgroundColor, required Color logoColor}) =>
       getLogoCircle(size: 120, logoColor: color, backgroundColor: backgroundColor, padding: 15);
 }
