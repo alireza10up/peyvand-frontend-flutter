@@ -1,38 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:peyvand/config/app_theme.dart';
-import 'package:peyvand/config/routes.dart';
-
-import '../../../config/app_assets.dart';
+import 'package:peyvand/config/app_assets.dart'; //
+import 'package:peyvand/config/app_theme.dart'; //
+import 'package:peyvand/config/routes.dart'; //
+import 'package:peyvand/core/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 2),
-    );
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _controller.forward();
-
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, Routes.onboarding);
-    });
+    _checkAuthStatus();
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  Future<void> _checkAuthStatus() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await Future.delayed(Duration(seconds: 2));
+
+      if (authProvider.isAuthenticated) {
+        Navigator.pushReplacementNamed(context, Routes.home);
+      } else {
+        Navigator.pushReplacementNamed(context, Routes.onboarding);
+      }
+    });
   }
 
   @override
@@ -40,7 +35,16 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: AppTheme.primaryColor,
       body: Center(
-        child: AppAssets.getLogoCircle()
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AppAssets.getLogoCircle(size: 100, backgroundColor: Colors.white), //
+            SizedBox(height: 20),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }
