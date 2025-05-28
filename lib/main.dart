@@ -1,31 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:peyvand/features/auth/presentation/screens/auth_screen.dart';
+import 'package:peyvand/features/home/presentation/screens/home_screen.dart';
+import 'package:peyvand/services/auth_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:peyvand/config/routes.dart';
-import 'package:peyvand/config/app_theme.dart';
 
 void main() {
-  runApp(MyApp());
+  // WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final AuthService authService = AuthService();
+
     return MaterialApp(
-      title: 'پیوند',
+      title: 'اپلیکیشن پیوند',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      // darkTheme: AppTheme.darkTheme,
-      initialRoute: Routes.splash,
-      onGenerateRoute: Routes.generateRoute,
-      localizationsDelegates: [
+      locale: const Locale('fa', 'IR'),
+      supportedLocales: const [Locale('fa', 'IR'), Locale('en', 'US')],
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
-        Locale('fa', ''),
-      ],
-      locale: Locale('fa', ''),
+      theme: ThemeData(
+        useMaterial3: true,
+        fontFamily: 'Vazir',
+        primarySwatch: Colors.blue,
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 12.0,
+            vertical: 10.0,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            padding: const EdgeInsets.symmetric(
+              vertical: 12.0,
+              horizontal: 16.0,
+            ),
+          ),
+        ),
+      ),
+      home: FutureBuilder<bool>(
+        future: authService.isAuthenticated,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          } else {
+            if (snapshot.hasData && snapshot.data == true) {
+              return const HomeScreen();
+            } else {
+              return const AuthScreen();
+            }
+          }
+        },
+      ),
+      routes: {
+        '/auth': (context) => const AuthScreen(),
+        '/home': (context) => const HomeScreen(),
+      },
     );
   }
 }

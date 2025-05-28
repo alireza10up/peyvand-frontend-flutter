@@ -17,7 +17,7 @@ class CustomTextField extends StatelessWidget {
   final String? initialValue;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     this.label,
     this.hintText,
     this.isPassword = false,
@@ -30,8 +30,8 @@ class CustomTextField extends StatelessWidget {
     this.suffix,
     this.readOnly = false,
     this.onTap,
-    this.initialValue,
-  }) : super(key: key);
+    this.initialValue, required String labelText, required bool obscureText,
+  });
 
   @override
   Widget build(BuildContext context) {
