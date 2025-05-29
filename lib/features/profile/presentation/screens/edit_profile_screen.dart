@@ -91,7 +91,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if(mounted) {
         print('Error picking image: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطا در انتخاب تصویر: $e')),
+          SnackBar(content: Text('خطا در انتخاب تصویر: ')),
         );
       }
     }
@@ -155,9 +155,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         final uploadData = await _userService.uploadProfileImageAndGetData(_selectedImageFile!, _selectedImageMimeType!);
         newProfileFileId = uploadData['id'];
       } on ApiException catch (e) {
-        errorMessage = 'خطا در آپلود تصویر:\n${e.combinedMessage}';
+        errorMessage = 'خطا در آپلود تصویر:\n${e.toString()}';
       } catch (e) {
-        errorMessage = 'خطای ناشناخته در آپلود تصویر: $e';
+        errorMessage = '$e';
       }
 
       if (errorMessage != null) {
@@ -223,13 +223,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } on ApiException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطا در ذخیره پروفایل:\n${e.combinedMessage}'), backgroundColor: Theme.of(context).colorScheme.error, duration: const Duration(seconds: 5)),
+          SnackBar(content: Text('خطا در ذخیره پروفایل:\n${e.toString()}'), backgroundColor: Theme.of(context).colorScheme.error, duration: const Duration(seconds: 5)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطای ناشناخته در ذخیره: $e'), backgroundColor: Theme.of(context).colorScheme.error, duration: const Duration(seconds: 5)),
+          SnackBar(content: Text('$e'), backgroundColor: Theme.of(context).colorScheme.error, duration: const Duration(seconds: 5)),
         );
       }
     }

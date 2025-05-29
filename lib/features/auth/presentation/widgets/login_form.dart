@@ -28,7 +28,9 @@ class _LoginFormState extends State<LoginForm> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    setState(() { _isLoading = true; });
+    setState(() {
+      _isLoading = true;
+    });
     try {
       final result = await _authService.login(
         _emailController.text.trim(),
@@ -41,21 +43,27 @@ class _LoginFormState extends State<LoginForm> {
             content: Text(result['message'] ?? 'ورود با موفقیت انجام شد!'),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             margin: const EdgeInsets.all(10),
           ),
         );
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const MainTabScreen()),
-              (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message'] ?? 'خطا در ورود. لطفاً دوباره تلاش کنید.'),
+            content: Text(
+              result['message'] ?? 'خطا در ورود. لطفاً دوباره تلاش کنید.',
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             margin: const EdgeInsets.all(10),
           ),
         );
@@ -64,16 +72,20 @@ class _LoginFormState extends State<LoginForm> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('|یک خطای پیش‌بینی نشده رخ داد: $e'),
+          content: Text(e.toString()),
           backgroundColor: Theme.of(context).colorScheme.error,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           margin: const EdgeInsets.all(10),
         ),
       );
     } finally {
       if (mounted) {
-        setState(() { _isLoading = false; });
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -101,7 +113,9 @@ class _LoginFormState extends State<LoginForm> {
                 if (value == null || value.isEmpty) {
                   return 'لطفا ایمیل خود را وارد کنید';
                 }
-                final emailRegex = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+                final emailRegex = RegExp(
+                  r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                );
                 if (!emailRegex.hasMatch(value)) {
                   return 'لطفا یک ایمیل معتبر وارد کنید';
                 }
@@ -116,7 +130,9 @@ class _LoginFormState extends State<LoginForm> {
                 prefixIcon: const Icon(Icons.lock_outline_rounded),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                    _obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
                     color: Colors.grey,
                   ),
                   onPressed: () {
@@ -141,9 +157,9 @@ class _LoginFormState extends State<LoginForm> {
             _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
-              onPressed: _login,
-              child: const Text('ورود به حساب کاربری'),
-            ),
+                  onPressed: _login,
+                  child: const Text('ورود به حساب کاربری'),
+                ),
           ],
         ),
       ),
