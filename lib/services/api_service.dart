@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:peyvand/helpers/token_manager.dart';
 
 class ApiService {
-  final String _baseUrl = 'http://154.16.16.2:9090';
+  final String _baseUrl = 'https://peyvand.web-dev.sbs';
   final TokenManager _tokenManager = TokenManager();
 
   Future<Map<String, String>> _getHeaders({
@@ -64,7 +64,9 @@ class ApiService {
       return _handleResponse(response);
     } catch (e) {
       if (e is ApiException) rethrow;
-      throw Exception('خطا در برقراری ارتباط با سرور: $e');
+      throw ApiException(
+        messages: ['لطفا از اتصال اینترنتی خود اطمینان حاصل کنید.'],
+      );
     }
   }
 
@@ -86,7 +88,9 @@ class ApiService {
       if (e is ApiException) {
         rethrow;
       }
-      throw Exception('خطا در برقراری ارتباط با سرور: $e');
+      throw ApiException(
+        messages: ['لطفا از اتصال اینترنتی خود اطمینان حاصل کنید.'],
+      );
     }
   }
 
@@ -106,7 +110,9 @@ class ApiService {
       return _handleResponse(response);
     } catch (e) {
       if (e is ApiException) rethrow;
-      throw Exception('خطا در برقراری ارتباط با سرور: $e');
+      throw ApiException(
+        messages: ['لطفا از اتصال اینترنتی خود اطمینان حاصل کنید.'],
+      );
     }
   }
 
@@ -159,7 +165,8 @@ class ApiService {
       }
     } catch (e) {
       if (e is ApiException) rethrow;
-      throw Exception('خطا در ارتباط با سرور هنگام آپلود: $e');
-    }
+      throw ApiException(
+        messages: ['لطفا از اتصال اینترنتی خود اطمینان حاصل کنید.'],
+      );    }
   }
 }

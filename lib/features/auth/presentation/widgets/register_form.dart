@@ -70,7 +70,7 @@ class _RegisterFormState extends State<RegisterForm> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('یک خطای پیش‌بینی نشده در هنگام ثبت نام رخ داد: $e'),
+          content: Text(e.toString()),
           backgroundColor: Theme.of(context).colorScheme.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

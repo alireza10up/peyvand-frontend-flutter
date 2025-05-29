@@ -47,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (mounted) {
         setState(() { _isLoading = false; });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطا در بارگذاری پروفایل: $e')),
+          SnackBar(content: Text(e.toString())),
         );
       }
     }
