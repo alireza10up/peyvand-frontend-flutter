@@ -41,7 +41,7 @@ class Post {
   final int id;
   final String? title;
   final String content;
-  final User user; // از مدل User که قبلا داشتی استفاده می‌کنیم
+  final User user;
   final PostStatus status;
   final List<PostFile> files;
   final DateTime createdAt;

@@ -277,7 +277,7 @@ class _UserPostsScreenState extends State<UserPostsScreen>
         itemBuilder: (context, index) {
           final post = _userPosts[index];
           return PostCardWidget(
-            post: post,
+            initialPost: post,
             onEdit: () => _handlePostCardEdit(post),
             onDelete: () => _deletePost(post.id),
           );

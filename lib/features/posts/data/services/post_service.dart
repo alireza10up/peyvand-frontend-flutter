@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:peyvand/features/posts/data/models/comment_model.dart';
 import 'package:peyvand/services/api_service.dart';
 import 'package:peyvand/errors/api_exception.dart';
 import 'package:peyvand/features/posts/data/models/post_model.dart';
@@ -98,6 +99,106 @@ class PostService {
     } catch (e) {
       if (e is ApiException) rethrow;
       throw ApiException(messages: ['خطا در حذف پست: ${e.toString()}']);
+    }
+  }
+
+  Future<Map<String, dynamic>> toggleLikePost(int postId) async {
+    try {
+      final response = await _apiService.post('/posts/$postId/like-toggle', {});
+
+      return {
+        'message': response['message'] ?? 'عملیات انجام شد',
+        'count': response['count'] ?? 0,
+        'isLikedByCurrentUser': response['isLikedByCurrentUser'] ?? false,
+      };
+    } catch (e) {
+      if (e is ApiException) {
+        throw ApiException(messages: ['خطا در عملیات لایک: ${e.toString()}']);
+      }
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> getPostLikeDetails(int postId) async {
+    try {
+      final response = await _apiService.get('/posts/$postId/likes/count');
+      return {
+        'count': response['count'] ?? 0,
+        'isLikedByCurrentUser': response['isLikedByCurrentUser'] ?? false,
+      };
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(
+        messages: ['خطا در دریافت جزئیات لایک: ${e.toString()}'],
+      );
+    }
+  }
+
+  Future<Comment> addCommentToPost(int postId, String content) async {
+    try {
+      final response = await _apiService.post('/posts/$postId/comments', {
+        'content': content,
+      });
+      return Comment.fromJson(response);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(messages: ['خطا در ارسال نظر: ${e.toString()}']);
+    }
+  }
+
+  Future<List<Comment>> getCommentsForPost(int postId) async {
+    try {
+      final response = await _apiService.get('/posts/$postId/comments');
+      if (response is List) {
+        return response
+            .map((commentJson) => Comment.fromJson(commentJson))
+            .toList();
+      } else {
+        throw ApiException(messages: ['فرمت پاسخ لیست نظرات نامعتبر است.']);
+      }
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(messages: ['خطا در دریافت نظرات: ${e.toString()}']);
+    }
+  }
+
+  Future<void> deleteComment(int commentId) async {
+    try {
+      await _apiService.delete('/comments/$commentId');
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(messages: ['خطا در حذف نظر: ${e.toString()}']);
+    }
+  }
+
+  Future<Comment> addReplyToComment(int parentCommentId, String content) async {
+    try {
+      final response = await _apiService.post(
+        '/comments/$parentCommentId/replies',
+        {'content': content},
+      );
+      return Comment.fromJson(response);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(messages: ['خطا در ارسال پاسخ: ${e.toString()}']);
+    }
+  }
+
+  Future<List<Comment>> getRepliesForComment(int parentCommentId) async {
+    try {
+      final response = await _apiService.get(
+        '/comments/$parentCommentId/replies',
+      );
+      if (response is List) {
+        return response
+            .map((replyJson) => Comment.fromJson(replyJson))
+            .toList();
+      } else {
+        throw ApiException(messages: ['فرمت پاسخ لیست پاسخ‌ها نامعتبر است.']);
+      }
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(messages: ['خطا در دریافت پاسخ‌ها: ${e.toString()}']);
     }
   }
 }

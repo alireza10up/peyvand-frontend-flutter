@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:peyvand/features/auth/presentation/screens/auth_screen.dart';
 import 'package:peyvand/features/home/presentation/screens/home_screen.dart';
-import 'package:peyvand/features/auth/data/services/auth_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:peyvand/features/posts/presentation/screens/create_edit_post_screen.dart';
-
+import 'package:peyvand/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:peyvand/config/app_theme.dart';
 import 'features/main/presentation/screens/main_tab_screen.dart';
 import 'features/posts/presentation/screens/user_posts_screen.dart';
 
 void main() {
-  // WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -18,8 +24,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AuthService authService = AuthService();
-
     return MaterialApp(
       title: 'اپلیکیشن پیوند',
       debugShowCheckedModeBanner: false,
@@ -33,7 +37,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Vazir',
-        primarySwatch: Colors.blue,
+        // primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSeed(seedColor: AppTheme.primaryColor),
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -55,15 +60,14 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: FutureBuilder<bool>(
-        future: authService.isAuthenticated,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      home: Consumer<AuthProvider>(
+        builder: (context, auth, child) {
+          if (auth.isLoading) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           } else {
-            if (snapshot.hasData && snapshot.data == true) {
+            if (auth.isAuthenticated && auth.currentUser != null) {
               return const MainTabScreen();
             } else {
               return const AuthScreen();
@@ -73,7 +77,6 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         MainTabScreen.routeName: (context) => const MainTabScreen(),
-        AuthScreen.routeName: (context) => const AuthScreen(),
         HomeScreen.routeName: (context) => const HomeScreen(),
         UserPostsScreen.routeName: (context) => const UserPostsScreen(),
         CreateEditPostScreen.routeName: (context) => const CreateEditPostScreen(),
