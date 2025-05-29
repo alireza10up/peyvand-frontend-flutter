@@ -1,0 +1,160 @@
+
+name: Flutter CI
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set Git Identity
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.3'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install cider for version management
+        run: flutter pub global activate cider
+
+      - name: Analyze commit messages for version bump
+        id: version_analysis
+        run: |
+          CURRENT_VERSION=$(grep -Po '(?<=version: ).*(?=\+)' pubspec.yaml || grep -Po '(?<=version: ).*' pubspec.yaml)
+          
+          NEW_BUILD_NUMBER=$(git rev-list --count HEAD)
+          
+          COMMIT_MESSAGES=""
+          
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+          
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            if [ -z "$PR_NUMBER" ]; then
+              COMMIT_MESSAGES=$(git log -10 --pretty=format:"%s")
+            else
+              PR_COMMITS_RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/commits")
+          
+              if echo "$PR_COMMITS_RESPONSE" | jq -e 'if type=="array" then true else false end' > /dev/null; then
+                COMMIT_MESSAGES=$(echo "$PR_COMMITS_RESPONSE" | jq -r '.[].commit.message' 2>/dev/null || echo "")
+              else
+                COMMIT_MESSAGES=$(git log -10 --pretty=format:"%s")
+              fi
+            fi
+          else
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -n "$LAST_TAG" ]; then
+              COMMIT_MESSAGES=$(git log $LAST_TAG..HEAD --pretty=format:"%s")
+            else
+              COMMIT_MESSAGES=$(git log -20 --pretty=format:"%s")
+            fi
+          fi
+          
+          echo "$COMMIT_MESSAGES"
+          
+          if [ -z "$COMMIT_MESSAGES" ]; then
+            BUMP_TYPE="patch"
+          elif echo "$COMMIT_MESSAGES" | grep -qiE "break|BREAKING CHANGE|!:"; then
+            BUMP_TYPE="major"
+          elif echo "$COMMIT_MESSAGES" | grep -qiE "^feat|^feature"; then
+            BUMP_TYPE="minor"
+          elif echo "$COMMIT_MESSAGES" | grep -qiE "^fix|^bug"; then
+            BUMP_TYPE="patch"
+          else
+            BUMP_TYPE="patch" 
+          fi
+          
+          echo "BUMP_TYPE=$BUMP_TYPE" >> $GITHUB_ENV
+          
+          BASE_VERSION=$(echo $CURRENT_VERSION | sed -E 's/(-beta|-alpha)\.[0-9]+$//')
+          
+          IFS='.' read -ra VERSION_PARTS <<< "$BASE_VERSION"
+          MAJOR=${VERSION_PARTS[0]:-0}
+          MINOR=${VERSION_PARTS[1]:-0}
+          PATCH=${VERSION_PARTS[2]:-0}
+          
+          if [ "$BUMP_TYPE" == "major" ]; then
+            NEW_VERSION="$((MAJOR+1)).0.0"
+          elif [ "$BUMP_TYPE" == "minor" ]; then
+            NEW_VERSION="$MAJOR.$((MINOR+1)).0"
+          elif [ "$BUMP_TYPE" == "patch" ]; then
+            NEW_VERSION="$MAJOR.$MINOR.$((PATCH+1))"
+          else
+            NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          fi
+          
+          NEW_VERSION="$NEW_VERSION+$NEW_BUILD_NUMBER"
+          
+          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
+      - name: Update version in pubspec.yaml
+        run: |
+          if [ "${{ env.BUMP_TYPE }}" != "none" ]; then
+            flutter pub global run cider version ${{ env.VERSION }}
+          else
+            CURRENT_VERSION=$(grep -Po '(?<=version: ).*(?=\+)' pubspec.yaml || grep -Po '(?<=version: ).*' pubspec.yaml)
+            NEW_BUILD_NUMBER=$(git rev-list --count HEAD)
+            flutter pub global run cider version $CURRENT_VERSION+$NEW_BUILD_NUMBER
+            NEW_VERSION=$(grep -Po '(?<=version: ).*' pubspec.yaml)
+            echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          fi
+      - name: Commit version changes
+        run: |
+          git add pubspec.yaml
+          git commit -m "chore: update version to ${{ env.VERSION }} [skip ci]"
+          git push || echo
+      - name: Build Debug APK
+        run: flutter build apk --debug
+
+      - name: Build Profile APK
+        run: flutter build apk --profile
+
+      - name: Build Release APK
+        run: flutter build apk --release
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk-${{ env.VERSION }}
+          path: build/app/outputs/flutter-apk/app-debug.apk
+
+      - name: Upload Profile APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: profile-apk-${{ env.VERSION }}
+          path: build/app/outputs/flutter-apk/app-profile.apk
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk-${{ env.VERSION }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          draft: false
+          prerelease: false
+          files: |
+            build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
