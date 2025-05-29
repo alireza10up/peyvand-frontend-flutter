@@ -6,6 +6,8 @@ import '../widgets/register_form.dart';
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
 
+  static const String routeName = '/auth';
+
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).primaryColor;
@@ -42,10 +44,7 @@ class AuthScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   "برای ادامه وارد شوید یا ثبت نام کنید",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 15, color: Colors.grey[600]),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 30),
@@ -59,7 +58,8 @@ class AuthScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(4),
                   child: TabBar(
                     labelColor: Theme.of(context).colorScheme.onPrimary,
-                    unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                    unselectedLabelColor:
+                        Theme.of(context).colorScheme.onSurfaceVariant,
                     labelStyle: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -76,7 +76,9 @@ class AuthScreen extends StatelessWidget {
                       color: Theme.of(context).primaryColor,
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context).primaryColor.withOpacity(0.3),
+                          color: Theme.of(
+                            context,
+                          ).primaryColor.withOpacity(0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -84,22 +86,15 @@ class AuthScreen extends StatelessWidget {
                     ),
                     dividerHeight: 0,
                     tabs: const [
-                      Tab(
-                        child: Center(child: Text('ورود')),
-                      ),
-                      Tab(
-                        child: Center(child: Text('ثبت نام')),
-                      ),
+                      Tab(child: Center(child: Text('ورود'))),
+                      Tab(child: Center(child: Text('ثبت نام'))),
                     ],
                   ),
                 ),
                 const SizedBox(height: 20),
                 Expanded(
                   child: TabBarView(
-                    children: [
-                      const LoginForm(),
-                      const RegisterForm()
-                    ],
+                    children: [const LoginForm(), const RegisterForm()],
                   ),
                 ),
                 const SizedBox(height: 20),

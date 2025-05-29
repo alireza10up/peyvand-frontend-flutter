@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:peyvand/features/home/presentation/screens/home_screen.dart';
 import 'package:peyvand/features/profile/presentation/screens/profile_screen.dart';
+import 'package:peyvand/features/posts/presentation/screens/user_posts_screen.dart';
 
 class MainTabScreen extends StatefulWidget {
   const MainTabScreen({super.key});
+
+  static const String routeName = '/main-tab';
 
   @override
   State<MainTabScreen> createState() => _MainTabScreenState();
@@ -14,6 +17,7 @@ class _MainTabScreenState extends State<MainTabScreen> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
+    UserPostsScreen(),
     ProfileScreen(),
   ];
 
@@ -28,15 +32,18 @@ class _MainTabScreenState extends State<MainTabScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
+      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home_rounded),
             label: 'خانه',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.post_add_outlined),
+            activeIcon: Icon(Icons.post_add),
+            label: 'پست',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_rounded),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:peyvand/services/api_service.dart'; // برای getBaseUrl
 import 'package:peyvand/features/auth/presentation/screens/auth_screen.dart';
-import 'package:peyvand/features/profile/domain/models/user_model.dart';
+import 'package:peyvand/features/profile/data/models/user_model.dart';
 import 'package:peyvand/features/profile/data/services/user_service.dart';
 import 'package:peyvand/features/auth/data/services/auth_service.dart';
 import 'edit_profile_screen.dart';

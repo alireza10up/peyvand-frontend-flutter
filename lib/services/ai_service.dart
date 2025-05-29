@@ -1,50 +1,55 @@
+import 'dart:io';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
+
 class AiService {
-  // This is a placeholder service for AI functionality
-  // In a real app, this would connect to an AI API like OpenAI or a custom backend
-
   Future<String> enhancePost(String content) async {
-    // Simulate API call delay
-    await Future.delayed(Duration(seconds: 2));
-
-    // Placeholder response
-    return 'نسخه بهبود یافته پست شما:\n\n$content\n\n[هوش مصنوعی گرامر، وضوح و جذابیت این محتوا را بهبود بخشیده است]';
+    await Future.delayed(Duration(seconds: 1));
+    if (content.isEmpty) return '';
+    return 'بهبود یافته با هوش مصنوعی: $content\n[گرامر و وضوح این متن توسط هوش مصنوعی ارتقا یافته است.]';
   }
 
   Future<String> getSimilarProfiles(List<String> skills) async {
-    // Simulate API call delay
-    await Future.delayed(Duration(seconds: 2));
-
-    // Placeholder response
-    return 'بر اساس مهارت‌های شما (${skills.join("، ")}), افرادی که ممکن است بخواهید با آن‌ها ارتباط برقرار کنید...';
+    await Future.delayed(Duration(seconds: 1));
+    return 'بر اساس مهارت‌های شما (${skills.join("، ")}), این افراد ممکن است برای شما جالب باشند...';
   }
 
   Future<String> getChatResponse(String message) async {
-    // Simulate API call delay
-    await Future.delayed(Duration(seconds: 2));
-
-    // Simple keyword-based responses
-    if (message.toLowerCase().contains('hello') || message.toLowerCase().contains('hi')) {
-      return 'سلام! چطور می‌توانم امروز به شما در توسعه حرفه‌ای‌تان کمک کنم؟';
-    } else if (message.toLowerCase().contains('job') || message.toLowerCase().contains('career')) {
-      return 'توسعه شغلی مهم است! آیا به روزرسانی بخش مهارت‌های خود برای برجسته‌سازی تخصص‌های مرتبط‌تان را در نظر گرفته‌اید؟';
-    } else if (message.toLowerCase().contains('network') || message.toLowerCase().contains('connect')) {
-      return 'شبکه‌سازی برای رشد شغلی بسیار مهم است. توصیه می‌کنم با متخصصان حوزه خود ارتباط برقرار کنید و به طور منظم با محتوای آن‌ها تعامل داشته باشید.';
-    } else {
-      return 'ممنون از پیام شما. من اینجا هستم تا در مورد مشاوره شغلی، توسعه حرفه‌ای و نکات شبکه‌سازی کمک کنم. لطفاً هر سؤال خاصی دارید بپرسید!';
+    await Future.delayed(Duration(seconds: 1));
+    if (message.toLowerCase().contains('سلام')) {
+      return 'سلام! چطور می‌توانم در مسیر حرفه‌ای به شما کمک کنم؟';
     }
+    return 'پیام شما دریافت شد: "$message". در حال پردازش...';
   }
 
   Future<List<String>> getSuggestions(String userProfile) async {
-    // Simulate API call delay
     await Future.delayed(Duration(seconds: 1));
-
-    // Placeholder suggestions
     return [
-      'پروفایل خود را با دستاوردهای اخیر به‌روز کنید',
-      'با ۵ متخصص جدید در حوزه خود ارتباط برقرار کنید',
-      'مقاله‌ای درباره روندهای صنعت به اشتراک بگذارید',
-      'مهارت جدیدی مرتبط با شغل خود یاد بگیرید',
-      'به یک گروه یا انجمن تخصصی بپیوندید',
+      'پروفایل خود را با آخرین دستاوردهایتان به‌روز کنید.',
+      'با ۵ متخصص جدید در حوزه کاری خود ارتباط برقرار کنید.',
+      'یک مقاله مرتبط با صنعت خود به اشتراک بگذارید.'
     ];
+  }
+
+  Future<String> enhanceText(String currentText) async {
+    await Future.delayed(Duration(seconds: 1));
+    if (currentText.isEmpty) return '';
+    return "متن بهبود یافته توسط هوش مصنوعی:\n$currentText\n... شفاف‌تر و جذاب‌تر!";
+  }
+
+  Future<File?> generateImageWithAI(String prompt) async {
+    await Future.delayed(Duration(seconds: 2));
+    try {
+      final byteData = await rootBundle.load('assets/images/logo.png');
+      final buffer = byteData.buffer;
+      final tempDir = await getTemporaryDirectory();
+      final fileName = 'ai_generated_image_${DateTime.now().millisecondsSinceEpoch}.png';
+      final file = File('${tempDir.path}/$fileName');
+      await file.writeAsBytes(buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+      return file;
+    } catch (e) {
+      print("Error generating mock AI image: $e");
+      return null;
+    }
   }
 }
