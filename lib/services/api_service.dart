@@ -116,6 +116,23 @@ class ApiService {
     }
   }
 
+  Future<dynamic> delete(String endpoint, {bool includeAuth = true}) async {
+    final url = Uri.parse('$_baseUrl$endpoint');
+    final headers = await _getHeaders(includeAuth: includeAuth);
+    try {
+      final response = await http.delete(url, headers: headers);
+      if (response.statusCode == 204) {
+        return {'success': true, 'message': 'عملیات با موفقیت انجام شد.'};
+      }
+      return _handleResponse(response);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(
+        messages: ['لطفا از اتصال اینترنتی خود اطمینان حاصل کنید.'],
+      );
+    }
+  }
+
   Future<Map<String, dynamic>> uploadFile(
     String endpoint,
     File file, {

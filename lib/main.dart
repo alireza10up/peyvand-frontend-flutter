@@ -3,8 +3,10 @@ import 'package:peyvand/features/auth/presentation/screens/auth_screen.dart';
 import 'package:peyvand/features/home/presentation/screens/home_screen.dart';
 import 'package:peyvand/features/auth/data/services/auth_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:peyvand/features/posts/presentation/screens/create_edit_post_screen.dart';
 
 import 'features/main/presentation/screens/main_tab_screen.dart';
+import 'features/posts/presentation/screens/user_posts_screen.dart';
 
 void main() {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -70,8 +72,11 @@ class MyApp extends StatelessWidget {
         },
       ),
       routes: {
-        '/auth': (context) => const AuthScreen(),
-        '/home': (context) => const HomeScreen(),
+        MainTabScreen.routeName: (context) => const MainTabScreen(),
+        AuthScreen.routeName: (context) => const AuthScreen(),
+        HomeScreen.routeName: (context) => const HomeScreen(),
+        UserPostsScreen.routeName: (context) => const UserPostsScreen(),
+        CreateEditPostScreen.routeName: (context) => const CreateEditPostScreen(),
       },
     );
   }

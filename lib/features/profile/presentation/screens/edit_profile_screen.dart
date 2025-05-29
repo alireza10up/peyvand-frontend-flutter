@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:peyvand/services/api_service.dart';
-import 'package:peyvand/features/profile/domain/models/user_model.dart';
+import 'package:peyvand/features/profile/data/models/user_model.dart';
 import 'package:peyvand/features/profile/data/services/user_service.dart';
 import 'package:peyvand/errors/api_exception.dart';
 

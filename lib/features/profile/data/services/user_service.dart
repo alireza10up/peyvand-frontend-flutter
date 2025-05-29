@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:peyvand/features/profile/domain/models/user_model.dart';
+import 'package:peyvand/features/profile/data/models/user_model.dart';
 import 'package:peyvand/services/api_service.dart';
 import 'package:peyvand/errors/api_exception.dart';
 

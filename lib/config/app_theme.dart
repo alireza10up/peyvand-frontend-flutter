@@ -11,9 +11,9 @@ class AppTheme {
   static const Color dividerColor = Color(0xFFE0E0E0);
   static const Color errorColor = Color(0xFFFF6B6B);
 
-  // static const Color textColor = Color(0xFF222222);
-  // static const Color textColorDark = Color(0xFFF1F1F1);
-  // static const Color lightTextColor = Color(0xFF888888);
+  static const Color textColor = Color(0xFF222222);
+  static const Color textColorDark = Color(0xFFF1F1F1);
+  static const Color lightTextColor = Color(0xFF888888);
 
   static final ThemeData lightTheme = ThemeData(
     fontFamily: 'Vazir',
