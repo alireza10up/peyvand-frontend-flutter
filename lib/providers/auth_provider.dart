@@ -45,6 +45,7 @@ class AuthProvider with ChangeNotifier {
       _currentUser = null;
       await logout();
     }
+    notifyListeners();
   }
 
   Future<void> login(String email, String password) async {
