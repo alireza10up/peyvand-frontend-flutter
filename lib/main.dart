@@ -7,7 +7,10 @@ import 'package:peyvand/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:peyvand/config/app_theme.dart';
 import 'features/main/presentation/screens/main_tab_screen.dart';
+import 'features/posts/data/models/post_model.dart';
+import 'features/posts/presentation/screens/single_post_screen.dart';
 import 'features/posts/presentation/screens/user_posts_screen.dart';
+import 'features/profile/presentation/screens/other_user_profile_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -79,7 +82,16 @@ class MyApp extends StatelessWidget {
         MainTabScreen.routeName: (context) => const MainTabScreen(),
         HomeScreen.routeName: (context) => const HomeScreen(),
         UserPostsScreen.routeName: (context) => const UserPostsScreen(),
-        CreateEditPostScreen.routeName: (context) => const CreateEditPostScreen(),
+        CreateEditPostScreen.routeName:
+            (context) => const CreateEditPostScreen(),
+        SinglePostScreen.routeName: (context) {
+          final post = ModalRoute.of(context)!.settings.arguments as Post;
+          return SinglePostScreen(post: post);
+        },
+        OtherUserProfileScreen.routeName: (context) {
+          final userId = ModalRoute.of(context)!.settings.arguments as String;
+          return OtherUserProfileScreen(userId: userId);
+        },
       },
     );
   }

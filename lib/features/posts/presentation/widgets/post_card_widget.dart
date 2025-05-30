@@ -14,12 +14,18 @@ class PostCardWidget extends StatefulWidget {
   final Post initialPost;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final bool showStatusChip;
+  final Function(String userId)? onTapUserProfile;
+  final VoidCallback? onTapCard;
 
   const PostCardWidget({
     super.key,
     required this.initialPost,
     this.onEdit,
     this.onDelete,
+    this.showStatusChip = true,
+    this.onTapUserProfile,
+    this.onTapCard,
   });
 
   @override
@@ -27,21 +33,18 @@ class PostCardWidget extends StatefulWidget {
 }
 
 class _PostCardWidgetState extends State<PostCardWidget> {
-  late Post post; // The current state of the post
+  late Post post;
   late int likeCount;
   late bool isLikedByCurrentUser;
-  bool _isLoadingLikeDetails = true; // For initial loading of like data
-  bool _isTogglingLike = false; // For loading state when like button is pressed
+  bool _isLoadingLikeDetails = true;
+  bool _isTogglingLike = false;
 
-  // Services
   final PostService _postService = PostService();
   final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
-    // likeCount = widget.initialPost.likeCount ?? 0;
-    // isLikedByCurrentUser = widget.initialPost.isLikedByCurrentUser ?? false;
     post = widget.initialPost;
     _fetchPostLikeDetails();
   }
@@ -52,8 +55,8 @@ class _PostCardWidgetState extends State<PostCardWidget> {
       _isLoadingLikeDetails = true;
     });
     try {
-      final Map<String, dynamic> likeDetails = await _postService
-          .getPostLikeDetails(post.id);
+      final Map<String, dynamic> likeDetails =
+      await _postService.getPostLikeDetails(post.id);
 
       if (mounted) {
         setState(() {
@@ -67,6 +70,8 @@ class _PostCardWidgetState extends State<PostCardWidget> {
         print("Error fetching like details for post ${post.id}: $e");
         setState(() {
           _isLoadingLikeDetails = false;
+          likeCount = 0;
+          isLikedByCurrentUser = false;
         });
       }
     }
@@ -80,8 +85,8 @@ class _PostCardWidgetState extends State<PostCardWidget> {
     });
 
     try {
-      final Map<String, dynamic> toggleResult = await _postService
-          .toggleLikePost(post.id);
+      final Map<String, dynamic> toggleResult =
+      await _postService.toggleLikePost(post.id);
 
       if (mounted) {
         setState(() {
@@ -94,7 +99,7 @@ class _PostCardWidgetState extends State<PostCardWidget> {
         print("Error toggling like for post ${post.id}: $e");
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('خطا در عملیات لایک.')));
+        ).showSnackBar(const SnackBar(content: Text('خطا در عملیات لایک.')));
       }
     } finally {
       if (mounted) {
@@ -135,16 +140,15 @@ class _PostCardWidgetState extends State<PostCardWidget> {
         textColor = Colors.black.withOpacity(0.7);
         iconData = Icons.inventory_2_outlined;
         break;
-      default:
-        text = status.toString().split('.').last;
+      default: // Should not happen if status is always valid
+        text = status.toString().split('.').last; // Fallback
         backgroundColor = Colors.grey.shade400;
-        textColor = Colors.white;
         iconData = Icons.label_important_outline_rounded;
     }
 
     return Chip(
       avatar:
-          iconData != null ? Icon(iconData, color: textColor, size: 15) : null,
+      iconData != null ? Icon(iconData, color: textColor, size: 15) : null,
       label: Text(
         text,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -155,13 +159,13 @@ class _PostCardWidgetState extends State<PostCardWidget> {
       ),
       backgroundColor: backgroundColor,
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3.0),
-      labelPadding: iconData != null ? const EdgeInsets.only(right: 6.0) : null,
+      labelPadding:
+      iconData != null ? const EdgeInsets.only(right: 6.0) : null,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       visualDensity: VisualDensity.compact,
       elevation: 1.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        // side: BorderSide(color: Colors.black.withOpacity(0.1))
       ),
     );
   }
@@ -196,15 +200,14 @@ class _PostCardWidgetState extends State<PostCardWidget> {
       backgroundColor: Colors.transparent,
       builder: (BuildContext modalContext) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.7,
-          minChildSize: 0.4,
-          maxChildSize: 0.85,
+          initialChildSize: 0.7, //
+          minChildSize: 0.4, //
+          maxChildSize: 0.85, //
           expand: false,
           builder: (_, scrollController) {
             return CommentsBottomSheetWidget(
               postId: post.id,
               currentUserId: currentUserId,
-              // scrollController: scrollController,
             );
           },
         );
@@ -222,10 +225,7 @@ class _PostCardWidgetState extends State<PostCardWidget> {
     if (post.user.profilePictureRelativeUrl != null &&
         post.user.profilePictureRelativeUrl!.isNotEmpty) {
       userAvatarUrl =
-          _apiService.getBaseUrl() +
-          post
-              .user
-              .profilePictureRelativeUrl!; // Assuming getBaseUrl is available
+          _apiService.getBaseUrl() + post.user.profilePictureRelativeUrl!;
     }
 
     return Card(
@@ -233,268 +233,258 @@ class _PostCardWidgetState extends State<PostCardWidget> {
       elevation: 3.0,
       shadowColor: Colors.grey.withOpacity(0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 22,
-                  backgroundColor: colorScheme.surfaceContainerHighest,
-                  backgroundImage:
-                      userAvatarUrl != null
-                          ? NetworkImage(userAvatarUrl)
-                          : null,
-                  child:
-                      userAvatarUrl == null
-                          ? Icon(
-                            Icons.person_outline_rounded,
-                            size: 24,
-                            color: colorScheme.onSurfaceVariant,
-                          )
-                          : null,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: widget.onTapCard,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              InkWell(
+                onTap: widget.onTapUserProfile != null && post.user.id.isNotEmpty
+                    ? () => widget.onTapUserProfile!(post.user.id)
+                    : null,
+                borderRadius: BorderRadius.circular(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        post.user.displayName ?? post.user.email,
-                        style: textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        formatDateTime(post.createdAt),
-                        style: textTheme.bodySmall?.copyWith(
+                      CircleAvatar(
+                        radius: 22,
+                        backgroundColor: colorScheme.surfaceContainerHighest,
+                        backgroundImage: userAvatarUrl != null
+                            ? NetworkImage(userAvatarUrl)
+                            : null,
+                        child: userAvatarUrl == null
+                            ? Icon(
+                          Icons.person_outline_rounded,
+                          size: 24,
                           color: colorScheme.onSurfaceVariant,
+                        )
+                            : null,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              post.user.displayName ?? post.user.email,
+                              style: textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              formatDateTime(post.createdAt),
+                              style: textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      if (widget.onEdit != null || widget.onDelete != null)
+                        SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: PopupMenuButton<String>(
+                            icon: Icon(
+                              Icons.more_vert_rounded,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            tooltip: "گزینه‌ها",
+                            onSelected: (value) {
+                              if (value == 'edit' && widget.onEdit != null) {
+                                widget.onEdit!();
+                              } else if (value == 'delete' &&
+                                  widget.onDelete != null) {
+                                widget.onDelete!();
+                              }
+                            },
+                            itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<String>>[
+                              if (widget.onEdit != null)
+                                const PopupMenuItem<String>(
+                                  value: 'edit',
+                                  child: ListTile(
+                                    leading: Icon(Icons.edit_outlined, size: 20),
+                                    title: Text('ویرایش', style: TextStyle(fontSize: 14)),
+                                  ),
+                                ),
+                              if (widget.onDelete != null)
+                                const PopupMenuItem<String>(
+                                  value: 'delete',
+                                  child: ListTile(
+                                    leading: Icon(Icons.delete_outline_rounded, color: Colors.red, size: 20),
+                                    title: Text('حذف', style: TextStyle(color: Colors.red, fontSize: 14)),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
                     ],
                   ),
                 ),
-                if (widget.onEdit != null || widget.onDelete != null)
-                  SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: PopupMenuButton<String>(
-                      icon: Icon(
-                        Icons.more_vert_rounded,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      tooltip: "گزینه‌ها",
-                      onSelected: (value) {
-                        if (value == 'edit' && widget.onEdit != null)
-                          widget.onEdit!();
-                        else if (value == 'delete' && widget.onDelete != null)
-                          widget.onDelete!();
-                      },
-                      itemBuilder:
-                          (BuildContext context) => <PopupMenuEntry<String>>[
-                            if (widget.onEdit != null)
-                              const PopupMenuItem<String>(
-                                value: 'edit',
-                                child: ListTile(
-                                  leading: Icon(Icons.edit_outlined, size: 20),
-                                  title: Text(
-                                    'ویرایش',
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ),
-                              ),
-                            if (widget.onDelete != null)
-                              const PopupMenuItem<String>(
-                                value: 'delete',
-                                child: ListTile(
-                                  leading: Icon(
-                                    Icons.delete_outline_rounded,
-                                    color: Colors.red,
-                                    size: 20,
-                                  ),
-                                  title: Text(
-                                    'حذف',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            if (post.title != null && post.title!.isNotEmpty) ...[
-              Text(
-                post.title!,
-                style: textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 8),
-            ],
-            Text(
-              post.content,
-              style: textTheme.bodyLarge?.copyWith(height: 1.5),
-              maxLines: 5,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 10),
-            _buildStatusChip(post.status),
-            if (post.files.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 120,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: post.files.length,
-                  itemBuilder: (context, index) {
-                    final file = post.files[index];
-                    final imageUrl =
-                        (file.url.startsWith('http') ||
-                                file.url.startsWith('https'))
-                            ? file.url
-                            : _apiService.getBaseUrl() +
-                                (file.url.startsWith('/')
-                                    ? file.url
-                                    : '/${file.url}');
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.0),
-                        child: Image.network(
-                          imageUrl,
-                          width: 120,
-                          height: 120,
-                          fit: BoxFit.cover,
-                          errorBuilder:
-                              (context, error, stackTrace) => Container(
+              const SizedBox(height: 12),
+              if (post.title != null && post.title!.isNotEmpty) ...[
+                Text(
+                  post.title!,
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+              ],
+              Text(
+                post.content,
+                style: textTheme.bodyLarge?.copyWith(height: 1.5),
+                  maxLines: widget.onTapCard != null ? 5 : null,
+                  overflow: widget.onTapCard != null ? TextOverflow.ellipsis : TextOverflow.visible  ),
+              const SizedBox(height: 10),
+              if (widget.showStatusChip) ...[
+                _buildStatusChip(post.status),
+                const SizedBox(height: 10),
+              ],
+              if (post.files.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 120,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: post.files.length,
+                    itemBuilder: (context, index) {
+                      final file = post.files[index];
+                      final imageUrl = (file.url.startsWith('http') ||
+                          file.url.startsWith('https'))
+                          ? file.url
+                          : _apiService.getBaseUrl() +
+                          (file.url.startsWith('/')
+                              ? file.url
+                              : '/${file.url}');
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.0),
+                          child: Image.network(
+                            imageUrl,
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                                  width: 120,
+                                  height: 120,
+                                  color: Colors.grey.shade200,
+                                  child: const Icon(
+                                    Icons.broken_image_outlined,
+                                    color: Colors.grey,
+                                    size: 30,
+                                  ),
+                                ),
+                            loadingBuilder: (
+                                BuildContext context,
+                                Widget child,
+                                ImageChunkEvent? loadingProgress,
+                                ) {
+                              if (loadingProgress == null) return child;
+                              return Container(
                                 width: 120,
                                 height: 120,
-                                color: Colors.grey.shade200,
-                                child: const Icon(
-                                  Icons.broken_image_outlined,
-                                  color: Colors.grey,
-                                  size: 30,
+                                color: Colors.grey.shade100,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress
+                                        .expectedTotalBytes !=
+                                        null
+                                        ? loadingProgress
+                                        .cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                        : null,
+                                    strokeWidth: 2.0,
+                                  ),
                                 ),
-                              ),
-                          loadingBuilder: (
-                            BuildContext context,
-                            Widget child,
-                            ImageChunkEvent? loadingProgress,
-                          ) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              width: 120,
-                              height: 120,
-                              color: Colors.grey.shade100,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  value:
-                                      loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress
-                                                  .cumulativeBytesLoaded /
-                                              loadingProgress
-                                                  .expectedTotalBytes!
-                                          : null,
-                                  strokeWidth: 2.0,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-            Divider(height: 32, thickness: 0.8, color: Colors.grey.shade300),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                TextButton.icon(
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                  ),
-                  icon:
-                      _isTogglingLike || _isLoadingLikeDetails
-                          ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: colorScheme.primary,
-                            ),
-                          )
-                          : Icon(
-                            isLikedByCurrentUser
-                                ? Icons.thumb_up_alt_rounded
-                                : Icons.thumb_up_alt_outlined,
-                            size: 20,
-                            color:
-                                isLikedByCurrentUser
-                                    ? colorScheme.primary
-                                    : colorScheme.onSurfaceVariant,
-                          ),
-                  label: Text(
-                    _isLoadingLikeDetails ? "..." : "$likeCount لایک",
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  onPressed:
-                      _isLoadingLikeDetails ? null : _handleLikeButtonTap,
-                ),
-                TextButton.icon(
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                  ),
-                  icon: Icon(
-                    Icons.comment_outlined,
-                    size: 20,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  label: Text(
-                    "نظرات",
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  onPressed: () {
-                    if (post.status == PostStatus.published) {
-                      _showCommentsBottomSheet(context);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'فقط برای پست‌های منتشر شده می‌توانید نظر ارسال کنید یا نظرات را ببینید.',
+                              );
+                            },
                           ),
                         ),
                       );
-                    }
-                  },
+                    },
+                  ),
                 ),
+                const SizedBox(height: 10),
               ],
-            ),
-          ],
+              Divider(height: 32, thickness: 0.8, color: Colors.grey.shade300),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  TextButton.icon(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                    ),
+                    icon: _isTogglingLike || _isLoadingLikeDetails
+                        ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: colorScheme.primary,
+                      ),
+                    )
+                        : Icon(
+                      isLikedByCurrentUser
+                          ? Icons.thumb_up_alt_rounded
+                          : Icons.thumb_up_alt_outlined,
+                      size: 20,
+                      color: isLikedByCurrentUser
+                          ? colorScheme.primary
+                          : colorScheme.onSurfaceVariant,
+                    ),
+                    label: Text(
+                      _isLoadingLikeDetails ? "..." : "$likeCount لایک",
+                      style: textTheme.bodyMedium
+                          ?.copyWith(color: colorScheme.onSurfaceVariant),
+                    ),
+                    onPressed:
+                    _isLoadingLikeDetails ? null : _handleLikeButtonTap,
+                  ),
+                  TextButton.icon(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                    ),
+                    icon: Icon(
+                      Icons.comment_outlined,
+                      size: 20,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    label: Text(
+                      "نظرات",
+                      style: textTheme.bodyMedium
+                          ?.copyWith(color: colorScheme.onSurfaceVariant),
+                    ),
+                    onPressed: () {
+                      if (post.status == PostStatus.published) {
+                        _showCommentsBottomSheet(context);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('فقط برای پست‌های منتشر شده می‌توانید نظر ارسال کنید یا نظرات را ببینید.'))
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
