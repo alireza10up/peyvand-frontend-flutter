@@ -201,4 +201,22 @@ class PostService {
       throw ApiException(messages: ['خطا در دریافت پاسخ‌ها: ${e.toString()}']);
     }
   }
+
+  Future<List<Post>> getAllPosts() async {
+    try {
+      final response = await _apiService.get('/posts/');
+      if (response is List) {
+        return response.map((postJson) => Post.fromJson(postJson)).toList();
+      } else {
+        throw ApiException(
+          messages: ['فرمت پاسخ دریافت لیست تمام پست‌ها نامعتبر است.'],
+        );
+      }
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(
+        messages: ['خطا در دریافت تمام پست‌ها: ${e.toString()}'],
+      );
+    }
+  }
 }
