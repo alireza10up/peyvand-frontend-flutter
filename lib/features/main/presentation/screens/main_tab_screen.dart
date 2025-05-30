@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:peyvand/features/home/presentation/screens/home_screen.dart'; //
-import 'package:peyvand/features/profile/presentation/screens/profile_screen.dart'; //
-import 'package:peyvand/features/posts/presentation/screens/user_posts_screen.dart'; //
+import 'package:peyvand/features/home/presentation/screens/home_screen.dart';
+import 'package:peyvand/features/profile/presentation/screens/profile_screen.dart';
+import 'package:peyvand/features/posts/presentation/screens/user_posts_screen.dart';
 import 'package:peyvand/features/connections/presentation/screens/network_screen.dart';
 import 'package:peyvand/features/chat/presentation/screens/chat_list_screen.dart';
 
 class MainTabScreen extends StatefulWidget {
-  const MainTabScreen({super.key}); //
+  const MainTabScreen({super.key});
 
   static const String routeName = '/main-tab';
 

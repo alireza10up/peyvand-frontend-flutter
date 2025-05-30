@@ -1,4 +1,3 @@
-// lib/features/chat/presentation/screens/chat_list_screen.dart
 import 'package:flutter/material.dart';
 
 class ChatListScreen extends StatelessWidget {
