@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:peyvand/features/home/presentation/screens/home_screen.dart';
 import 'package:peyvand/features/profile/presentation/screens/profile_screen.dart';
 import 'package:peyvand/features/posts/presentation/screens/user_posts_screen.dart';
+import 'package:peyvand/features/connections/presentation/screens/network_screen.dart';
+import 'package:peyvand/features/chat/presentation/screens/chat_list_screen.dart';
 
 class MainTabScreen extends StatefulWidget {
   const MainTabScreen({super.key});
@@ -17,7 +19,9 @@ class _MainTabScreenState extends State<MainTabScreen> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
+    NetworkScreen(),
     UserPostsScreen(),
+    ChatListScreen(),
     ProfileScreen(),
   ];
 
@@ -41,9 +45,19 @@ class _MainTabScreenState extends State<MainTabScreen> {
             label: 'خانه',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.hub_outlined),
+            activeIcon: Icon(Icons.hub_rounded),
+            label: 'شبکه',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.post_add_outlined),
             activeIcon: Icon(Icons.post_add),
-            label: 'پست',
+            label: 'پست‌ها',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_outline_rounded),
+            activeIcon: Icon(Icons.chat_bubble_rounded),
+            label: 'گفتگوها',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_rounded),
