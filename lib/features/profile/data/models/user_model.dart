@@ -11,7 +11,7 @@ class User {
   final String? lastName;
   final String? birthDate;
   final String? studentCode;
-
+  final DateTime? createdAtDate;
 
   User({
     required this.id,
@@ -26,6 +26,7 @@ class User {
     this.lastName,
     this.birthDate,
     this.studentCode,
+    this.createdAtDate
   });
 
   String? get profilePictureUrl => null;
@@ -44,20 +45,26 @@ class User {
     String? lastName,
     String? birthDate,
     String? studentCode,
+    DateTime? createdAtDate,
   }) {
     return User(
       id: id ?? this.id,
       email: email ?? this.email,
       displayName: displayName ?? this.displayName,
       bio: bio ?? this.bio,
-      profileFileId: clearProfilePicture ? null : profileFileId ?? this.profileFileId,
-      profilePictureRelativeUrl: clearProfilePicture ? null : profilePictureRelativeUrl ?? this.profilePictureRelativeUrl,
+      profileFileId:
+          clearProfilePicture ? null : profileFileId ?? this.profileFileId,
+      profilePictureRelativeUrl:
+          clearProfilePicture
+              ? null
+              : profilePictureRelativeUrl ?? this.profilePictureRelativeUrl,
       university: university ?? this.university,
       skills: skills ?? this.skills,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       birthDate: birthDate ?? this.birthDate,
       studentCode: studentCode ?? this.studentCode,
+      createdAtDate: createdAtDate ?? this.createdAtDate,
     );
   }
 }
