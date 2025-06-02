@@ -4,7 +4,7 @@ import 'package:peyvand/errors/api_exception.dart';
 import 'package:peyvand/features/profile/data/models/user_model.dart';
 import 'package:peyvand/features/profile/presentation/screens/other_user_profile_screen.dart';
 import 'package:peyvand/services/api_service.dart';
-import 'package:peyvand/providers/auth_provider.dart';
+import 'package:peyvand/features/auth/data/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:peyvand/features/connections/data/models/connection_status.dart';
 import 'package:peyvand/features/connections/data/models/pending_request_direction.dart';

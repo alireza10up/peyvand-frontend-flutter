@@ -7,7 +7,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:peyvand/config/app_theme.dart';
 import 'package:peyvand/features/posts/data/models/post_status_enum.dart';
 import 'package:provider/provider.dart';
-import 'package:peyvand/providers/auth_provider.dart';
+import 'package:peyvand/features/auth/data/providers/auth_provider.dart';
 import 'comments_bottom_sheet.dart';
 
 class PostCardWidget extends StatefulWidget {
