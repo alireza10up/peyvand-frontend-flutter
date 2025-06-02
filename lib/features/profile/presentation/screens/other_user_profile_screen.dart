@@ -7,7 +7,7 @@ import 'package:peyvand/features/posts/data/services/post_service.dart';
 import 'package:peyvand/features/posts/presentation/widgets/post_card_widget.dart';
 import 'package:peyvand/features/posts/presentation/screens/single_post_screen.dart';
 import 'package:peyvand/services/api_service.dart';
-import 'package:peyvand/providers/auth_provider.dart';
+import 'package:peyvand/features/auth/data/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:peyvand/features/connections/data/models/connection_status.dart';
 import 'package:peyvand/features/connections/data/models/pending_request_direction.dart';
@@ -17,6 +17,10 @@ import 'package:peyvand/features/profile/presentation/screens/edit_profile_scree
 import 'dart:math' as math;
 import 'package:intl/intl.dart' as intl;
 import 'package:peyvand/errors/api_exception.dart';
+import 'package:peyvand/features/chat/data/providers/chat_provider.dart';
+import 'package:peyvand/features/chat/presentation/screens/individual_chat_screen.dart';
+import 'package:peyvand/features/chat/data/models/chat_user_model.dart' as chat_user_model;
+
 
 class OtherUserProfileScreen extends StatefulWidget {
   static const String routeName = '/other-user-profile';
@@ -47,8 +51,10 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
   bool _isLoadingPosts = true;
   bool _isLoadingConnectionsForGraph = true;
   bool _isProcessingConnectionAction = false;
+  bool _isStartingChat = false;
 
   String? _currentLoggedInUserId;
+  User? _currentUserProfile;
   TabController? _tabController;
   bool _isSelfProfile = false;
 
@@ -60,6 +66,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
     _tabController = TabController(length: 2, vsync: this);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     _currentLoggedInUserId = authProvider.currentUserId;
+    _currentUserProfile = authProvider.currentUser;
     _isSelfProfile = _currentLoggedInUserId == widget.userId;
     _fetchAllData();
   }
@@ -179,7 +186,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
     try {
       final statusResult = await _connectionService.getConnectionStatusWithUser(
         widget.userId,
-      ); // widget.userId is profile user
+      );
       _apiConnectionIdWithProfileUser = statusResult['connectionId'];
       ConnectionStatus currentStatus = statusResult['status'];
 
@@ -188,7 +195,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
         bool foundDirection = false;
         try {
           final sentRequests =
-              await _connectionService.getSentPendingRequests();
+          await _connectionService.getSentPendingRequests();
           for (var req in sentRequests) {
             if (req.connectionId == _apiConnectionIdWithProfileUser &&
                 req.user.id == widget.userId) {
@@ -202,7 +209,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
         if (!foundDirection) {
           try {
             final receivedRequests =
-                await _connectionService.getReceivedPendingRequests();
+            await _connectionService.getReceivedPendingRequests();
             for (var req in receivedRequests) {
               if (req.connectionId == _apiConnectionIdWithProfileUser &&
                   req.user.id == widget.userId) {
@@ -272,17 +279,17 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
                 child: CircleAvatar(
                   radius: 52,
                   backgroundImage:
-                      fullProfileImageUrl != null
-                          ? NetworkImage(fullProfileImageUrl)
-                          : null,
+                  fullProfileImageUrl != null
+                      ? NetworkImage(fullProfileImageUrl)
+                      : null,
                   child:
-                      fullProfileImageUrl == null
-                          ? Icon(
-                            Icons.person_outline_rounded,
-                            size: 60,
-                            color: colorScheme.onSurfaceVariant,
-                          )
-                          : null,
+                  fullProfileImageUrl == null
+                      ? Icon(
+                    Icons.person_outline_rounded,
+                    size: 60,
+                    color: colorScheme.onSurfaceVariant,
+                  )
+                      : null,
                 ),
               ),
             ),
@@ -362,7 +369,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
                 label: const Text('قبول'),
                 onPressed:
                     () =>
-                        _handleAcceptRequest(_apiConnectionIdWithProfileUser!),
+                    _handleAcceptRequest(_apiConnectionIdWithProfileUser!),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green.shade600,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -377,7 +384,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
                 label: Text('رد', style: TextStyle(color: colorScheme.error)),
                 onPressed:
                     () =>
-                        _handleRejectRequest(_apiConnectionIdWithProfileUser!),
+                    _handleRejectRequest(_apiConnectionIdWithProfileUser!),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: colorScheme.error.withOpacity(0.7)),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -393,8 +400,8 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
   Widget _buildMainActionButtonsRow() {
     final colorScheme = Theme.of(context).colorScheme;
 
-    if ((_isProcessingConnectionAction ||
-            _connectionStatusWithProfileUser == ConnectionStatus.loading) &&
+    if ((_isProcessingConnectionAction || _isStartingChat ||
+        _connectionStatusWithProfileUser == ConnectionStatus.loading) &&
         !_isSelfProfile) {
       return const Padding(
         padding: EdgeInsets.all(8.0),
@@ -409,13 +416,13 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
         onPressed: () {
           Navigator.of(context)
               .push(
-                MaterialPageRoute(
-                  builder: (context) => EditProfileScreen(user: _user!),
-                ),
-              )
+            MaterialPageRoute(
+              builder: (context) => EditProfileScreen(user: _user!),
+            ),
+          )
               .then((updated) {
-                if (updated == true) _fetchUserProfile();
-              });
+            if (updated == true) _fetchUserProfile();
+          });
         },
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -438,7 +445,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
             color: colorScheme.primary,
           ),
           label: Text('پیام', style: TextStyle(color: colorScheme.primary)),
-          onPressed: _handleSendMessage,
+          onPressed: _isStartingChat ? null : _handleSendMessage,
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 11),
             side: BorderSide(color: colorScheme.primary.withOpacity(0.8)),
@@ -460,7 +467,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
             color: colorScheme.primary,
           ),
           label: Text('پیام', style: TextStyle(color: colorScheme.primary)),
-          onPressed: _handleSendMessage,
+          onPressed: _isStartingChat ? null : _handleSendMessage,
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 11),
             side: BorderSide(color: colorScheme.primary.withOpacity(0.8)),
@@ -489,13 +496,20 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
         );
         break;
       case ConnectionStatus.pending:
-        connButtonText = 'لغو درخواست';
-        connOnPressedAction =
-            () => _handleCancelRequest(_apiConnectionIdWithProfileUser);
-        connButtonIcon = Icons.cancel_outlined;
-        connButtonStyle = connButtonStyle?.copyWith(
-          backgroundColor: MaterialStateProperty.all(Colors.grey.shade300),
-        );
+        if (_pendingRequestDirection == PendingRequestDirection.sentByMe) {
+          connButtonText = 'لغو درخواست';
+          connOnPressedAction = () => _handleCancelRequest(_apiConnectionIdWithProfileUser);
+          connButtonIcon = Icons.cancel_outlined;
+          connButtonStyle = connButtonStyle?.copyWith(
+            backgroundColor: MaterialStateProperty.all(Colors.grey.shade300),
+          );
+        } else {
+          // This case (pending but not receivedFromProfileUser and not sentByMe) should ideally not happen often
+          // For safety, provide a default or disable
+          connButtonText = 'در انتظار';
+          connOnPressedAction = null;
+          connButtonIcon = Icons.hourglass_empty_rounded;
+        }
         break;
       case ConnectionStatus.accepted:
         connButtonText = 'اتصال برقرار';
@@ -551,14 +565,46 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
     );
   }
 
-  void _handleSendMessage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'هدایت به صفحه چت با ${_user?.displayName ?? "کاربر"} (به زودی)',
-        ),
-      ),
-    );
+  Future<void> _handleSendMessage() async {
+    if (_user == null || _currentUserProfile == null || _isStartingChat) return;
+
+    setStateIfMounted(() {
+      _isStartingChat = true;
+    });
+
+    try {
+      final chatProvider = ChatProvider(_currentUserProfile!.id, _currentUserProfile!);
+      final conversation = await chatProvider.createOrGetConversationWithUser(int.parse(_user!.id));
+
+      if (conversation != null && mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => IndividualChatScreen(
+              conversationId: conversation.id,
+              otherParticipant: chat_user_model.ChatUserModel.fromProfileUser(_user!),
+              chatProvider: chatProvider,
+            ),
+          ),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('خطا در ایجاد یا دریافت گفتگو.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('خطا در شروع چت: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setStateIfMounted(() {
+          _isStartingChat = false;
+        });
+      }
+    }
   }
 
   Future<void> _performConnectionAction(Future<void> Function() action) async {
@@ -593,7 +639,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
   }
 
   void _handleSendRequest() => _performConnectionAction(
-    () => _connectionService.sendConnectionRequest(widget.userId),
+        () => _connectionService.sendConnectionRequest(widget.userId),
   );
 
   void _handleCancelRequest(int? connectionId) {
@@ -605,27 +651,27 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
       return;
     }
     _performConnectionAction(
-      () => _connectionService.cancelSentRequest(connectionId),
+          () => _connectionService.cancelSentRequest(connectionId),
     );
   }
 
   void _handleAcceptRequest(int connectionId) => _performConnectionAction(
-    () => _connectionService.acceptReceivedRequest(connectionId),
+        () => _connectionService.acceptReceivedRequest(connectionId),
   );
 
   void _handleRejectRequest(int connectionId) => _performConnectionAction(
-    () => _connectionService.rejectReceivedRequest(connectionId),
+        () => _connectionService.rejectReceivedRequest(connectionId),
   );
 
   void _handleBlockUser() => _performConnectionActionWithConfirmation(
     title: 'بلاک کردن کاربر',
     content:
-        'آیا از بلاک کردن این کاربر (${_user?.displayName ?? ""}) مطمئن هستید؟',
+    'آیا از بلاک کردن این کاربر (${_user?.displayName ?? ""}) مطمئن هستید؟',
     action: () => _connectionService.blockUser(widget.userId),
   );
 
   void _handleUnblockUser() => _performConnectionAction(
-    () => _connectionService.unblockUser(widget.userId),
+        () => _connectionService.unblockUser(widget.userId),
   );
 
   void _handleDeleteConnection() {
@@ -638,11 +684,11 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
     _performConnectionActionWithConfirmation(
       title: 'حذف اتصال',
       content:
-          'آیا از حذف اتصال با ${_user?.displayName ?? "این کاربر"} مطمئن هستید؟',
+      'آیا از حذف اتصال با ${_user?.displayName ?? "این کاربر"} مطمئن هستید؟',
       action:
           () => _connectionService.deleteConnection(
-            _apiConnectionIdWithProfileUser!,
-          ),
+        _apiConnectionIdWithProfileUser!,
+      ),
     );
   }
 
@@ -656,33 +702,33 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
       context: context,
       builder:
           (ctx) => AlertDialog(
-            title: Text(title),
-            content: Text(content),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('لغو'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: Text(
-                  'تایید',
-                  style: TextStyle(color: Colors.red.shade700),
-                ),
-              ),
-            ],
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('لغو'),
           ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(
+              'تایید',
+              style: TextStyle(color: Colors.red.shade700),
+            ),
+          ),
+        ],
+      ),
     );
     if (confirm != true) return;
     await _performConnectionAction(action);
   }
 
   Widget _buildInfoTile(
-    BuildContext context,
-    IconData icon,
-    String title,
-    String? value,
-  ) {
+      BuildContext context,
+      IconData icon,
+      String title,
+      String? value,
+      ) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     if (value == null || value.isEmpty) return const SizedBox.shrink();
@@ -800,139 +846,139 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
 
     return Scaffold(
       body:
-          _isLoadingProfile || _user == null
-              ? const Center(child: CircularProgressIndicator())
-              : NestedScrollView(
-                headerSliverBuilder: (
-                  BuildContext context,
-                  bool innerBoxIsScrolled,
-                ) {
-                  return <Widget>[
-                    SliverAppBar(
-                      expandedHeight: 430.0,
-                      floating: false,
-                      pinned: true,
-                      elevation: 0.5,
-                      backgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      surfaceTintColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      leading: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                      actions: [
-                        if (!_isSelfProfile && popupMenuItems.isNotEmpty)
-                          PopupMenuButton<String>(
-                            onSelected: _onPopupMenuItemSelected,
-                            itemBuilder:
-                                (BuildContext context) => popupMenuItems,
-                            icon: Icon(
-                              Icons.more_vert_rounded,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
+      _isLoadingProfile || _user == null
+          ? const Center(child: CircularProgressIndicator())
+          : NestedScrollView(
+        headerSliverBuilder: (
+            BuildContext context,
+            bool innerBoxIsScrolled,
+            ) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: 430.0,
+              floating: false,
+              pinned: true,
+              elevation: 0.5,
+              backgroundColor:
+              Theme.of(context).scaffoldBackgroundColor,
+              surfaceTintColor:
+              Theme.of(context).scaffoldBackgroundColor,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              actions: [
+                if (!_isSelfProfile && popupMenuItems.isNotEmpty)
+                  PopupMenuButton<String>(
+                    onSelected: _onPopupMenuItemSelected,
+                    itemBuilder:
+                        (BuildContext context) => popupMenuItems,
+                    icon: Icon(
+                      Icons.more_vert_rounded,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.pin,
+                background: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        colorScheme.primary.withOpacity(0.15),
+                        colorScheme.primary.withOpacity(0.01),
                       ],
-                      flexibleSpace: FlexibleSpaceBar(
-                        collapseMode: CollapseMode.pin,
-                        background: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                colorScheme.primary.withOpacity(0.15),
-                                colorScheme.primary.withOpacity(0.01),
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                          ),
-                          child: _buildProfileHeaderContent(context, _user!),
-                        ),
-                      ),
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildInfoTile(
-                              context,
-                              Icons.confirmation_number_outlined,
-                              'کد دانشجویی',
-                              _user!.studentCode,
-                            ),
-                            _buildInfoTile(
-                              context,
-                              Icons.school_outlined,
-                              'دانشگاه',
-                              _user!.university,
-                            ),
-                            _buildInfoTile(
-                              context,
-                              Icons.lightbulb_outline_rounded,
-                              'مهارت‌ها',
-                              _user!.skills?.join('، '),
-                            ),
-                            _buildInfoTile(
-                              context,
-                              Icons.cake_outlined,
-                              'تاریخ تولد',
-                              formatBirthDate(_user!.birthDate),
-                            ),
-                            _buildInfoTile(
-                              context,
-                              Icons.date_range_outlined,
-                              'عضو از',
-                              formatDisplayDate(_user!.createdAtDate),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SliverPersistentHeader(
-                      delegate: _SliverAppBarDelegate(
-                        TabBar(
-                          controller: _tabController,
-                          labelColor: AppTheme.primaryColor,
-                          unselectedLabelColor: Colors.grey.shade600,
-                          indicatorColor: AppTheme.primaryColor,
-                          indicatorWeight: 2.5,
-                          tabs: const [
-                            Tab(
-                              child: Text(
-                                'پست‌ها',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            Tab(
-                              child: Text(
-                                'ارتباطات',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      pinned: true,
-                    ),
-                  ];
-                },
-                body: TabBarView(
-                  controller: _tabController,
-                  children: [_buildPostsTab(), _buildConnectionsTab()],
+                  ),
+                  child: _buildProfileHeaderContent(context, _user!),
                 ),
               ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildInfoTile(
+                      context,
+                      Icons.confirmation_number_outlined,
+                      'کد دانشجویی',
+                      _user!.studentCode,
+                    ),
+                    _buildInfoTile(
+                      context,
+                      Icons.school_outlined,
+                      'دانشگاه',
+                      _user!.university,
+                    ),
+                    _buildInfoTile(
+                      context,
+                      Icons.lightbulb_outline_rounded,
+                      'مهارت‌ها',
+                      _user!.skills?.join('، '),
+                    ),
+                    // _buildInfoTile(
+                    //   context,
+                    //   Icons.cake_outlined,
+                    //   'تاریخ تولد',
+                    //   formatBirthDate(_user!.birthDate),
+                    // ),
+                    _buildInfoTile(
+                      context,
+                      Icons.date_range_outlined,
+                      'عضو از',
+                      formatDisplayDate(_user!.createdAtDate),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SliverPersistentHeader(
+              delegate: _SliverAppBarDelegate(
+                TabBar(
+                  controller: _tabController,
+                  labelColor: AppTheme.primaryColor,
+                  unselectedLabelColor: Colors.grey.shade600,
+                  indicatorColor: AppTheme.primaryColor,
+                  indicatorWeight: 2.5,
+                  tabs: const [
+                    Tab(
+                      child: Text(
+                        'پست‌ها',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        'ارتباطات',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              pinned: true,
+            ),
+          ];
+        },
+        body: TabBarView(
+          controller: _tabController,
+          children: [_buildPostsTab(), _buildConnectionsTab()],
+        ),
+      ),
     );
   }
 
@@ -969,8 +1015,8 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
             showStatusChip: _isSelfProfile,
             onTapCard:
                 () => Navigator.of(
-                  context,
-                ).pushNamed(SinglePostScreen.routeName, arguments: post),
+              context,
+            ).pushNamed(SinglePostScreen.routeName, arguments: post),
             onTapUserProfile: (userId) {
               if (userId != widget.userId) {
                 Navigator.of(context).pushReplacementNamed(
@@ -1031,7 +1077,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
                     conn.user.profilePictureRelativeUrl!.isNotEmpty) {
                   avatarUrl =
                       _apiService.getBaseUrl() +
-                      conn.user.profilePictureRelativeUrl!;
+                          conn.user.profilePictureRelativeUrl!;
                 }
 
                 IconData statusIcon = Icons.link_rounded;
@@ -1074,14 +1120,14 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
                     leading: CircleAvatar(
                       radius: 22,
                       backgroundImage:
-                          avatarUrl != null ? NetworkImage(avatarUrl) : null,
+                      avatarUrl != null ? NetworkImage(avatarUrl) : null,
                       child:
-                          avatarUrl == null
-                              ? const Icon(
-                                Icons.person_outline_rounded,
-                                size: 22,
-                              )
-                              : null,
+                      avatarUrl == null
+                          ? const Icon(
+                        Icons.person_outline_rounded,
+                        size: 22,
+                      )
+                          : null,
                     ),
                     title: Text(
                       conn.user.displayName ?? conn.user.email,
@@ -1094,21 +1140,21 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
                       _isSelfProfile
                           ? statusText
                           : (conn.user.university ??
-                              'اطلاعات دانشگاه موجود نیست'),
+                          'اطلاعات دانشگاه موجود نیست'),
                       style: TextStyle(
                         fontSize: 13,
                         color:
-                            _isSelfProfile ? statusColor : Colors.grey.shade600,
+                        _isSelfProfile ? statusColor : Colors.grey.shade600,
                       ),
                     ),
                     trailing:
-                        _isSelfProfile
-                            ? Icon(statusIcon, color: statusColor, size: 20)
-                            : Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: 16,
-                              color: Colors.grey.shade400,
-                            ),
+                    _isSelfProfile
+                        ? Icon(statusIcon, color: statusColor, size: 20)
+                        : Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                      color: Colors.grey.shade400,
+                    ),
                     onTap: () {
                       if (conn.user.id != _currentLoggedInUserId) {
                         Navigator.of(context).pushNamed(
@@ -1137,11 +1183,11 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
     if (_user == null) return const SizedBox.shrink();
 
     List<ConnectionInfo> connectionsForPainter =
-        _isSelfProfile
-            ? _allGraphConnections
-            : _allGraphConnections
-                .where((c) => c.status == ConnectionStatus.accepted)
-                .toList();
+    _isSelfProfile
+        ? _allGraphConnections
+        : _allGraphConnections
+        .where((c) => c.status == ConnectionStatus.accepted)
+        .toList();
 
     return Column(
       children: [
@@ -1156,16 +1202,8 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
           onTapDown: (TapDownDetails details) {
             if (_graphPaintKey.currentContext != null) {
               final RenderBox renderBox =
-                  _graphPaintKey.currentContext!.findRenderObject()
-                      as RenderBox;
-              final Offset localPosition = renderBox.globalToLocal(
-                details.globalPosition,
-              );
-
-              // String? tappedUserId = (_graphPaintKey.currentState as _SimpleGraphPainterState?)?.hitTestGraph(localPosition);
-              // if (tappedUserId != null && tappedUserId != _currentLoggedInUserId) {
-              //    Navigator.of(context).pushNamed(OtherUserProfileScreen.routeName, arguments: tappedUserId);
-              // }
+              _graphPaintKey.currentContext!.findRenderObject()
+              as RenderBox;
             }
           },
           child: Container(
@@ -1224,10 +1262,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
+      BuildContext context,
+      double shrinkOffset,
+      bool overlapsContent,
+      ) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -1274,7 +1312,7 @@ class _SimpleConnectionGraphPainter extends CustomPainter {
     final Offset center = Offset(size.width / 2, size.height / 2);
     final double graphRadius =
         (size.width < size.height ? size.width : size.height) /
-        3.0;
+            3.0;
     final double centerNodeRadius = 28.0;
     final double connectionNodeRadius = 22.0;
     final double labelOffset = 12.0;
@@ -1306,10 +1344,10 @@ class _SimpleConnectionGraphPainter extends CustomPainter {
 
     final int maxDisplayConnections = 5;
     final List<ConnectionInfo> displayConnections =
-        connections.take(maxDisplayConnections).toList();
+    connections.take(maxDisplayConnections).toList();
     final angleStep =
         (2 * math.pi) /
-        (displayConnections.length > 0 ? displayConnections.length : 1);
+            (displayConnections.length > 0 ? displayConnections.length : 1);
 
     for (int i = 0; i < displayConnections.length; i++) {
       final ConnectionInfo connInfo = displayConnections[i];
@@ -1361,14 +1399,14 @@ class _SimpleConnectionGraphPainter extends CustomPainter {
   }
 
   void _drawNodeLabel(
-    Canvas canvas,
-    String text,
-    Offset nodeCenter,
-    double offsetFromNode,
-    Size canvasSize,
-    Color textColor, {
-    bool isCenter = false,
-  }) {
+      Canvas canvas,
+      String text,
+      Offset nodeCenter,
+      double offsetFromNode,
+      Size canvasSize,
+      Color textColor, {
+        bool isCenter = false,
+      }) {
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
@@ -1392,32 +1430,35 @@ class _SimpleConnectionGraphPainter extends CustomPainter {
     );
 
     if (labelPosition.dx < 0) labelPosition = Offset(2, labelPosition.dy);
-    if (labelPosition.dx + textPainter.width > canvasSize.width)
+    if (labelPosition.dx + textPainter.width > canvasSize.width) {
       labelPosition = Offset(
         canvasSize.width - textPainter.width - 2,
         labelPosition.dy,
       );
-    if (labelPosition.dy + textPainter.height > canvasSize.height)
+    }
+    if (labelPosition.dy + textPainter.height > canvasSize.height) {
       labelPosition = Offset(
         labelPosition.dx,
         canvasSize.height - textPainter.height - 2,
       );
-    if (labelPosition.dy < 0 && !isCenter)
+    }
+    if (labelPosition.dy < 0 && !isCenter) {
       labelPosition = Offset(
         labelPosition.dx,
         nodeCenter.dy - offsetFromNode - textPainter.height,
       );
+    }
 
     textPainter.paint(canvas, labelPosition);
   }
 
   void _drawText(
-    Canvas canvas,
-    String text,
-    Offset position,
-    double size,
-    Color color,
-  ) {
+      Canvas canvas,
+      String text,
+      Offset position,
+      double size,
+      Color color,
+      ) {
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
@@ -1441,8 +1482,8 @@ class _SimpleConnectionGraphPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _SimpleConnectionGraphPainter oldDelegate) =>
       oldDelegate.centerUser != centerUser ||
-      oldDelegate.connections != connections ||
-      oldDelegate.onNodeTap != onNodeTap;
+          oldDelegate.connections != connections ||
+          oldDelegate.onNodeTap != onNodeTap;
 
   @override
   bool? hitTest(Offset position) {

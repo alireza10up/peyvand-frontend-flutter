@@ -4,7 +4,7 @@ import 'package:peyvand/features/posts/data/services/post_service.dart';
 import 'package:peyvand/features/profile/presentation/screens/other_user_profile_screen.dart';
 import 'package:peyvand/services/api_service.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:peyvand/providers/auth_provider.dart';
+import 'package:peyvand/features/auth/data/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:peyvand/features/posts/presentation/widgets/comments_bottom_sheet.dart';
 import 'package:peyvand/config/app_theme.dart';

@@ -3,20 +3,34 @@ import 'package:peyvand/features/auth/presentation/screens/auth_screen.dart';
 import 'package:peyvand/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:peyvand/features/posts/presentation/screens/create_edit_post_screen.dart';
-import 'package:peyvand/providers/auth_provider.dart';
+import 'package:peyvand/features/auth/data/providers/auth_provider.dart';
+import 'package:peyvand/features/chat/data/providers/chat_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:peyvand/config/app_theme.dart';
-import 'features/main/presentation/screens/main_tab_screen.dart';
-import 'features/posts/data/models/post_model.dart';
-import 'features/posts/presentation/screens/single_post_screen.dart';
-import 'features/posts/presentation/screens/user_posts_screen.dart';
-import 'features/profile/presentation/screens/other_user_profile_screen.dart';
+import 'package:peyvand/features/main/presentation/screens/main_tab_screen.dart';
+import 'package:peyvand/features/posts/data/models/post_model.dart';
+import 'package:peyvand/features/posts/presentation/screens/single_post_screen.dart';
+import 'package:peyvand/features/posts/presentation/screens/user_posts_screen.dart';
+import 'package:peyvand/features/profile/presentation/screens/other_user_profile_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, ChatProvider?>(
+          create: (context) => null,
+          update: (context, auth, previousChatProvider) {
+            if (auth.isAuthenticated && auth.currentUser != null) {
+              return previousChatProvider ?? ChatProvider(auth.currentUserId!, auth.currentUser!);
+            }
+            previousChatProvider?.dispose();
+            return null;
+          },
+          lazy: false,
+        ),
+      ],
       child: const MyApp(),
     ),
   );
@@ -40,7 +54,6 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Vazir',
-        // primarySwatch: Colors.blue,
         colorScheme: ColorScheme.fromSeed(seedColor: AppTheme.primaryColor),
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(
@@ -82,8 +95,8 @@ class MyApp extends StatelessWidget {
         MainTabScreen.routeName: (context) => const MainTabScreen(),
         HomeScreen.routeName: (context) => const HomeScreen(),
         UserPostsScreen.routeName: (context) => const UserPostsScreen(),
-        CreateEditPostScreen.routeName:
-            (context) => const CreateEditPostScreen(),
+        CreateEditPostScreen.routeName: (context) =>
+        const CreateEditPostScreen(),
         SinglePostScreen.routeName: (context) {
           final post = ModalRoute.of(context)!.settings.arguments as Post;
           return SinglePostScreen(post: post);

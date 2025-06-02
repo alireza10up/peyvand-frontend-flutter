@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:peyvand/config/app_theme.dart';
+import 'package:peyvand/errors/api_exception.dart';
 import 'package:peyvand/features/profile/data/models/user_model.dart';
 import 'package:peyvand/features/profile/presentation/screens/other_user_profile_screen.dart';
 import 'package:peyvand/services/api_service.dart';
-import 'package:peyvand/providers/auth_provider.dart';
+import 'package:peyvand/features/auth/data/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:peyvand/features/connections/data/models/connection_status.dart';
 import 'package:peyvand/features/connections/data/models/pending_request_direction.dart';
@@ -19,7 +20,8 @@ class NetworkScreen extends StatefulWidget {
   State<NetworkScreen> createState() => _NetworkScreenState();
 }
 
-class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProviderStateMixin {
+class _NetworkScreenState extends State<NetworkScreen>
+    with SingleTickerProviderStateMixin {
   final ConnectionService _connectionService = ConnectionService();
   final ApiService _apiService = ApiService();
 
@@ -46,7 +48,6 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
     super.dispose();
   }
 
-
   Future<void> _loadNetworkData() async {
     setStateIfMounted(() {
       _isLoading = true;
@@ -59,14 +60,18 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
       _currentUser = authProvider.currentUser;
 
       if (_currentUser == null) {
-        throw Exception('کاربر لاگین نکرده است.');
+        throw ApiException(messages: ['کاربر لاگین نکرده است.']);
       }
 
       final acceptedFuture = _connectionService.getAcceptedConnections();
       final sentFuture = _connectionService.getSentPendingRequests();
       final receivedFuture = _connectionService.getReceivedPendingRequests();
 
-      final results = await Future.wait([acceptedFuture, sentFuture, receivedFuture]);
+      final results = await Future.wait([
+        acceptedFuture,
+        sentFuture,
+        receivedFuture,
+      ]);
 
       final List<ConnectionInfo> accepted = results[0] as List<ConnectionInfo>;
       final List<ConnectionInfo> sent = results[1] as List<ConnectionInfo>;
@@ -76,20 +81,33 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
 
       for (var conn in accepted) {
         if (!uniqueConnectionsMap.containsKey(conn.user.id)) {
-          uniqueConnectionsMap[conn.user.id] = conn.copyWith(pendingDir: PendingRequestDirection.none);
+          uniqueConnectionsMap[conn.user.id] = conn.copyWith(
+            pendingDir: PendingRequestDirection.none,
+          );
         }
       }
       for (var conn in sent) {
         if (!uniqueConnectionsMap.containsKey(conn.user.id)) {
-          uniqueConnectionsMap[conn.user.id] = conn.copyWith(pendingDir: PendingRequestDirection.sentByMe);
+          uniqueConnectionsMap[conn.user.id] = conn.copyWith(
+            pendingDir: PendingRequestDirection.sentByMe,
+          );
         }
       }
       for (var conn in received) {
-        _receivedPendingRequests.add(conn.copyWith(pendingDir: PendingRequestDirection.receivedFromProfileUser));
+        _receivedPendingRequests.add(
+          conn.copyWith(
+            pendingDir: PendingRequestDirection.receivedFromProfileUser,
+          ),
+        );
         if (!uniqueConnectionsMap.containsKey(conn.user.id)) {
-          uniqueConnectionsMap[conn.user.id] = conn.copyWith(pendingDir: PendingRequestDirection.receivedFromProfileUser);
-        } else if (uniqueConnectionsMap[conn.user.id]!.status != ConnectionStatus.accepted) {
-          uniqueConnectionsMap[conn.user.id] = conn.copyWith(pendingDir: PendingRequestDirection.receivedFromProfileUser);
+          uniqueConnectionsMap[conn.user.id] = conn.copyWith(
+            pendingDir: PendingRequestDirection.receivedFromProfileUser,
+          );
+        } else if (uniqueConnectionsMap[conn.user.id]!.status !=
+            ConnectionStatus.accepted) {
+          uniqueConnectionsMap[conn.user.id] = conn.copyWith(
+            pendingDir: PendingRequestDirection.receivedFromProfileUser,
+          );
         }
       }
 
@@ -97,7 +115,6 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
         _allConnectionsForGraph = uniqueConnectionsMap.values.toList();
         _isLoading = false;
       });
-
     } catch (e) {
       print('Error loading network data: $e');
       setStateIfMounted(() {
@@ -113,78 +130,104 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
 
   void _navigateToUserProfile(String userId) {
     if (userId != _currentUser?.id) {
-      Navigator.of(context).pushNamed(OtherUserProfileScreen.routeName, arguments: userId);
+      Navigator.of(
+        context,
+      ).pushNamed(OtherUserProfileScreen.routeName, arguments: userId);
     }
   }
 
   Future<void> _handleAcceptRequest(int connectionId) async {
     try {
-      setStateIfMounted(() {_isLoading = true;});
+      setStateIfMounted(() {
+        _isLoading = true;
+      });
       await _connectionService.acceptReceivedRequest(connectionId);
       await _loadNetworkData();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("خطا در قبول درخواست: ${e.toString()}")));
-      setStateIfMounted(() {_isLoading = false;});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("خطا در قبول درخواست: ${e.toString()}")),
+      );
+      setStateIfMounted(() {
+        _isLoading = false;
+      });
     }
   }
 
   Future<void> _handleRejectRequest(int connectionId) async {
     try {
-      setStateIfMounted(() {_isLoading = true;});
+      setStateIfMounted(() {
+        _isLoading = true;
+      });
       await _connectionService.rejectReceivedRequest(connectionId);
       await _loadNetworkData();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("خطا در رد درخواست: ${e.toString()}")));
-      setStateIfMounted(() {_isLoading = false;});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("خطا در رد درخواست: ${e.toString()}")),
+      );
+      setStateIfMounted(() {
+        _isLoading = false;
+      });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('شبکه و ارتباطات'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh_rounded),
-              onPressed: _loadNetworkData,
-              tooltip: 'بارگذاری مجدد',
-            )
-          ],
-          bottom: TabBar(
-            controller: _tabController,
-            labelColor: AppTheme.primaryColor,
-            unselectedLabelColor: Colors.grey.shade600,
-            indicatorColor: AppTheme.primaryColor,
-            tabs: const [
-              Tab(icon: Icon(Icons.device_hub_rounded), text: 'گراف شبکه'),
-              Tab(icon: Icon(Icons.group_add_outlined), text: 'درخواست‌ها'),
-            ],
+      appBar: AppBar(
+        title: const Text('شبکه و ارتباطات'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: _loadNetworkData,
+            tooltip: 'بارگذاری مجدد',
           ),
-        ),
-        body: TabBarView(
+        ],
+        bottom: TabBar(
           controller: _tabController,
-          children: [
-            _buildGraphTab(),
-            _buildRequestsTab(),
+          labelColor: AppTheme.primaryColor,
+          unselectedLabelColor: Colors.grey.shade600,
+          indicatorColor: AppTheme.primaryColor,
+          tabs: const [
+            Tab(icon: Icon(Icons.device_hub_rounded), text: 'گراف شبکه'),
+            Tab(icon: Icon(Icons.group_add_outlined), text: 'درخواست‌ها'),
           ],
-        )
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [_buildGraphTab(), _buildRequestsTab()],
+      ),
     );
   }
 
-  Widget _buildGraphTab(){
+  Widget _buildGraphTab() {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
     if (_error != null) {
-      return Center( child: Padding( padding: const EdgeInsets.all(16.0), child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error))));
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            _error!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ),
+      );
     }
     if (_currentUser == null) {
       return const Center(child: Text('اطلاعات کاربر مرکزی یافت نشد.'));
     }
     if (_allConnectionsForGraph.isEmpty) {
-      return const Center( child: Padding( padding: EdgeInsets.all(16.0), child: Text('هنوز هیچ ارتباطی برای نمایش در گراف وجود ندارد.', textAlign: TextAlign.center)));
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            'هنوز هیچ ارتباطی برای نمایش در گراف وجود ندارد.',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
     }
     return GestureDetector(
       child: CustomPaint(
@@ -200,15 +243,28 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildRequestsTab(){
+  Widget _buildRequestsTab() {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
     if (_error != null) {
-      return Center( child: Padding( padding: const EdgeInsets.all(16.0), child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error))));
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            _error!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ),
+      );
     }
     if (_receivedPendingRequests.isEmpty) {
-      return const Center(child: Padding(padding: EdgeInsets.all(16.0), child: Text('هیچ درخواست اتصال جدیدی ندارید.')));
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text('هیچ درخواست اتصال جدیدی ندارید.'),
+        ),
+      );
     }
 
     return ListView.builder(
@@ -218,14 +274,18 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
         final request = _receivedPendingRequests[index];
         final user = request.user;
         String? avatarUrl;
-        if (user.profilePictureRelativeUrl != null && user.profilePictureRelativeUrl!.isNotEmpty) {
-          avatarUrl = _apiService.getBaseUrl() + user.profilePictureRelativeUrl!;
+        if (user.profilePictureRelativeUrl != null &&
+            user.profilePictureRelativeUrl!.isNotEmpty) {
+          avatarUrl =
+              _apiService.getBaseUrl() + user.profilePictureRelativeUrl!;
         }
 
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
           elevation: 1,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Column(
@@ -235,8 +295,15 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
                   children: [
                     CircleAvatar(
                       radius: 22,
-                      backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
-                      child: avatarUrl == null ? const Icon(Icons.person_outline_rounded, size: 22) : null,
+                      backgroundImage:
+                          avatarUrl != null ? NetworkImage(avatarUrl) : null,
+                      child:
+                          avatarUrl == null
+                              ? const Icon(
+                                Icons.person_outline_rounded,
+                                size: 22,
+                              )
+                              : null,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -245,9 +312,22 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(user.displayName ?? user.email, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                            if(user.university != null && user.university!.isNotEmpty)
-                              Text(user.university!, style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+                            Text(
+                              user.displayName ?? user.email,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            if (user.university != null &&
+                                user.university!.isNotEmpty)
+                              Text(
+                                user.university!,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -255,33 +335,52 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
                   ],
                 ),
                 const SizedBox(height: 12),
-                Text("به شما درخواست اتصال داده است.", style: TextStyle(fontSize: 13, color: Colors.grey.shade700)),
+                Text(
+                  "به شما درخواست اتصال داده است.",
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     OutlinedButton(
-                      onPressed: () => _handleRejectRequest(request.connectionId),
+                      onPressed:
+                          () => _handleRejectRequest(request.connectionId),
                       style: OutlinedButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.error,
-                          side: BorderSide(color: Theme.of(context).colorScheme.error.withOpacity(0.7)),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+                        foregroundColor: Theme.of(context).colorScheme.error,
+                        side: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.error.withOpacity(0.7),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
                       child: const Text('رد کردن'),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                      onPressed: () => _handleAcceptRequest(request.connectionId),
+                      onPressed:
+                          () => _handleAcceptRequest(request.connectionId),
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade600,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
+                        backgroundColor: Colors.green.shade600,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
                       child: const Text('پذیرفتن'),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -290,7 +389,6 @@ class _NetworkScreenState extends State<NetworkScreen> with SingleTickerProvider
     );
   }
 }
-
 
 class _NetworkGraphPainter extends CustomPainter {
   final User currentUser;
@@ -313,7 +411,10 @@ class _NetworkGraphPainter extends CustomPainter {
 
     final Paint linePaint = Paint()..strokeWidth = 1.5;
     final Paint nodePaint = Paint();
-    final TextPainter textPainter = TextPainter(textDirection: TextDirection.rtl, textAlign: TextAlign.center);
+    final TextPainter textPainter = TextPainter(
+      textDirection: TextDirection.rtl,
+      textAlign: TextAlign.center,
+    );
 
     final Offset center = Offset(size.width / 2, size.height / 2);
     final double graphRadius = math.min(size.width, size.height) / 2.7;
@@ -323,15 +424,34 @@ class _NetworkGraphPainter extends CustomPainter {
 
     nodePaint.color = AppTheme.primaryColor;
     canvas.drawCircle(center, centerNodeRadius, nodePaint);
-    _drawTextOnNode(canvas, textPainter, currentUser.firstName?.substring(0,1).toUpperCase() ?? "U", center, Colors.white, centerNodeRadius * 0.6);
-    _drawNodeLabel(canvas, textPainter, currentUser.displayName ?? currentUser.email, center, centerNodeRadius + labelOffset, AppTheme.primaryTextColor, size, isCenter: true);
-    _nodeDetails.add({'rect': Rect.fromCircle(center: center, radius: centerNodeRadius), 'userId': currentUser.id});
+    _drawTextOnNode(
+      canvas,
+      textPainter,
+      currentUser.firstName?.substring(0, 1).toUpperCase() ?? "U",
+      center,
+      Colors.white,
+      centerNodeRadius * 0.6,
+    );
+    _drawNodeLabel(
+      canvas,
+      textPainter,
+      currentUser.displayName ?? currentUser.email,
+      center,
+      centerNodeRadius + labelOffset,
+      AppTheme.primaryTextColor,
+      size,
+      isCenter: true,
+    );
+    _nodeDetails.add({
+      'rect': Rect.fromCircle(center: center, radius: centerNodeRadius),
+      'userId': currentUser.id,
+    });
 
     if (connections.isEmpty) return;
 
     final int displayCount = math.min(connections.length, 10);
-    final double angleStep = (2 * math.pi) / (displayCount > 0 ? displayCount : 1);
-
+    final double angleStep =
+        (2 * math.pi) / (displayCount > 0 ? displayCount : 1);
 
     for (int i = 0; i < displayCount; i++) {
       final ConnectionInfo connInfo = connections[i];
@@ -357,7 +477,8 @@ class _NetworkGraphPainter extends CustomPainter {
             lineColor = AppTheme.accentColor.withOpacity(0.7);
             nodeColor = AppTheme.accentColor;
             lineStyle = LineStyle.dashed;
-          } else if (connInfo.pendingDirection == PendingRequestDirection.receivedFromProfileUser) {
+          } else if (connInfo.pendingDirection ==
+              PendingRequestDirection.receivedFromProfileUser) {
             lineColor = Colors.green.shade600.withOpacity(0.7);
             nodeColor = Colors.green.shade600;
             lineStyle = LineStyle.dashed;
@@ -381,44 +502,120 @@ class _NetworkGraphPainter extends CustomPainter {
         _drawDashedLine(canvas, center, nodePosition, [6, 4], linePaint);
       } else if (lineStyle == LineStyle.dotted) {
         _drawDashedLine(canvas, center, nodePosition, [1.5, 3.5], linePaint);
-      }
-      else {
+      } else {
         canvas.drawLine(center, nodePosition, linePaint);
       }
 
       nodePaint.color = nodeColor;
       canvas.drawCircle(nodePosition, connectionNodeRadius, nodePaint);
-      _drawTextOnNode(canvas, textPainter, nodeUser.firstName?.substring(0,1).toUpperCase() ?? "?", nodePosition, Colors.white, connectionNodeRadius * 0.6);
-      _drawNodeLabel(canvas, textPainter, nodeUser.displayName ?? nodeUser.email, nodePosition, connectionNodeRadius + labelOffset, nodeColor.withOpacity(1.0), size);
-      _nodeDetails.add({'rect': Rect.fromCircle(center: nodePosition, radius: connectionNodeRadius), 'userId': nodeUser.id});
+      _drawTextOnNode(
+        canvas,
+        textPainter,
+        nodeUser.firstName?.substring(0, 1).toUpperCase() ?? "?",
+        nodePosition,
+        Colors.white,
+        connectionNodeRadius * 0.6,
+      );
+      _drawNodeLabel(
+        canvas,
+        textPainter,
+        nodeUser.displayName ?? nodeUser.email,
+        nodePosition,
+        connectionNodeRadius + labelOffset,
+        nodeColor.withOpacity(1.0),
+        size,
+      );
+      _nodeDetails.add({
+        'rect': Rect.fromCircle(
+          center: nodePosition,
+          radius: connectionNodeRadius,
+        ),
+        'userId': nodeUser.id,
+      });
     }
   }
 
-  void _drawTextOnNode(Canvas canvas, TextPainter painter, String text, Offset position, Color color, double fontSize) {
-    painter.text = TextSpan(text: text, style: TextStyle(color: color, fontSize: fontSize, fontWeight: FontWeight.bold, fontFamily: 'Vazir'));
+  void _drawTextOnNode(
+    Canvas canvas,
+    TextPainter painter,
+    String text,
+    Offset position,
+    Color color,
+    double fontSize,
+  ) {
+    painter.text = TextSpan(
+      text: text,
+      style: TextStyle(
+        color: color,
+        fontSize: fontSize,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'Vazir',
+      ),
+    );
     painter.layout();
-    painter.paint(canvas, position - Offset(painter.width / 2, painter.height / 2));
+    painter.paint(
+      canvas,
+      position - Offset(painter.width / 2, painter.height / 2),
+    );
   }
 
-  void _drawNodeLabel(Canvas canvas, TextPainter painter, String text, Offset nodePosition, double offset, Color color, Size canvasSize, {bool isCenter = false}) {
-    painter.text = TextSpan(text: text, style: TextStyle(color: color, fontSize: isCenter ? 11 : 10, fontFamily: 'Vazir', fontWeight: FontWeight.w600));
+  void _drawNodeLabel(
+    Canvas canvas,
+    TextPainter painter,
+    String text,
+    Offset nodePosition,
+    double offset,
+    Color color,
+    Size canvasSize, {
+    bool isCenter = false,
+  }) {
+    painter.text = TextSpan(
+      text: text,
+      style: TextStyle(
+        color: color,
+        fontSize: isCenter ? 11 : 10,
+        fontFamily: 'Vazir',
+        fontWeight: FontWeight.w600,
+      ),
+    );
     painter.layout(maxWidth: isCenter ? 70 : 55);
 
-    Offset labelPosition = Offset(nodePosition.dx - painter.width / 2, nodePosition.dy + offset);
+    Offset labelPosition = Offset(
+      nodePosition.dx - painter.width / 2,
+      nodePosition.dy + offset,
+    );
 
     if (labelPosition.dx < 0) labelPosition = Offset(1, labelPosition.dy);
-    if (labelPosition.dx + painter.width > canvasSize.width) labelPosition = Offset(canvasSize.width - painter.width - 1, labelPosition.dy);
-    if (labelPosition.dy < 0 && !isCenter) labelPosition = Offset(labelPosition.dx, nodePosition.dy - offset - painter.height + 2);
-    if (labelPosition.dy + painter.height > canvasSize.height && !isCenter) labelPosition = Offset(labelPosition.dx, nodePosition.dy - offset - painter.height +2) ;
-
+    if (labelPosition.dx + painter.width > canvasSize.width)
+      labelPosition = Offset(
+        canvasSize.width - painter.width - 1,
+        labelPosition.dy,
+      );
+    if (labelPosition.dy < 0 && !isCenter)
+      labelPosition = Offset(
+        labelPosition.dx,
+        nodePosition.dy - offset - painter.height + 2,
+      );
+    if (labelPosition.dy + painter.height > canvasSize.height && !isCenter)
+      labelPosition = Offset(
+        labelPosition.dx,
+        nodePosition.dy - offset - painter.height + 2,
+      );
 
     painter.paint(canvas, labelPosition);
   }
 
-  void _drawDashedLine(Canvas canvas, Offset p1, Offset p2, List<double> dashArray, Paint paint) {
-    final path = ui.Path()
-      ..moveTo(p1.dx, p1.dy)
-      ..lineTo(p2.dx, p2.dy);
+  void _drawDashedLine(
+    Canvas canvas,
+    Offset p1,
+    Offset p2,
+    List<double> dashArray,
+    Paint paint,
+  ) {
+    final path =
+        ui.Path()
+          ..moveTo(p1.dx, p1.dy)
+          ..lineTo(p2.dx, p2.dy);
     final dashedPath = _dashPath(path, dashArray: dashArray);
     canvas.drawPath(dashedPath, paint);
   }
@@ -438,7 +635,13 @@ class _NetworkGraphPainter extends CustomPainter {
       while (distance < metric.length) {
         final double len = dashArray[dashIndex % dashArray.length];
         if (draw) {
-          dest.addPath(metric.extractPath(distance, math.min(distance + len, metric.length)), ui.Offset.zero);
+          dest.addPath(
+            metric.extractPath(
+              distance,
+              math.min(distance + len, metric.length),
+            ),
+            ui.Offset.zero,
+          );
         }
         distance += len;
         draw = !draw;

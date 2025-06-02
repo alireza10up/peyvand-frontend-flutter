@@ -353,7 +353,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                       _buildInfoTile(context, Icons.confirmation_number_outlined, 'کد دانشجویی', _user!.studentCode),
                       _buildInfoTile(context, Icons.school_outlined, 'دانشگاه', _user!.university),
                       _buildInfoTile(context, Icons.lightbulb_outline_rounded, 'مهارت‌ها', _user!.skills?.join('، ')),
-                      _buildInfoTile(context, Icons.cake_outlined, 'تاریخ تولد', formatBirthDate(_user!.birthDate)),
+                      // _buildInfoTile(context, Icons.cake_outlined, 'تاریخ تولد', formatBirthDate(_user!.birthDate)),
                       _buildInfoTile(context, Icons.date_range_outlined, 'عضو از', formatDisplayDate(_user!.createdAtDate)),
                     ],
                   ),
