@@ -8,6 +8,10 @@ import 'package:peyvand/features/posts/data/services/post_service.dart';
 import 'package:peyvand/services/ai_service.dart';
 import 'package:peyvand/errors/api_exception.dart';
 import 'package:peyvand/services/api_service.dart';
+import 'package:provider/provider.dart';
+import 'package:peyvand/features/auth/data/providers/auth_provider.dart';
+import 'package:peyvand/features/profile/data/models/user_model.dart' as profile_user_model;
+
 
 class CreateEditPostScreen extends StatefulWidget {
   final Post? post;
@@ -36,13 +40,17 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
   List<PostFile> _initialPostFiles = [];
 
   bool _isLoading = false;
+  bool _isAiLoading = false;
   final int _maxImages = 10;
+  profile_user_model.User? _currentUserProfile;
 
   bool get _isEditMode => widget.post != null;
 
   @override
   void initState() {
     super.initState();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _currentUserProfile = authProvider.currentUser;
     _titleController = TextEditingController(text: widget.post?.title ?? '');
     _contentController = TextEditingController(
       text: widget.post?.content ?? '',
@@ -53,7 +61,6 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
         _initialPostFiles = List<PostFile>.from(widget.post!.files);
       }
     }
-    // In create mode, _selectedStatus remains null as user won't set it.
   }
 
   @override
@@ -164,11 +171,12 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
       return;
     }
     setState(() {
-      _isLoading = true;
+      _isAiLoading = true;
     });
     try {
-      final enhancedText = await _aiService.enhancePost(
-        _contentController.text,
+      final enhancedText = await _aiService.enhancePostContent(
+          _contentController.text,
+          _currentUserProfile
       );
       if (mounted) {
         setState(() {
@@ -178,13 +186,13 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطا در بهبود متن با هوش مصنوعی: $e')),
+          SnackBar(content: Text('خطا در بهبود متن با هوش مصنوعی: ${e is ApiException ? e.toString() : e.toString()}')),
         );
       }
     } finally {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          _isAiLoading = false;
         });
       }
     }
@@ -209,7 +217,7 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
       _isLoading = true;
     });
     try {
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      await Future.delayed(const Duration(seconds: 1));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -238,7 +246,6 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    // In edit mode, status must be selected (it's initialized from current post's status)
     if (_isEditMode && _selectedStatus == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('لطفاً وضعیت پست را مشخص کنید.')),
@@ -256,8 +263,6 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
       }
 
       if (!_isEditMode) {
-        // Create new post
-        // Status is not sent on create, server assigns default
         await _postService.createPost(
           title: titleValue,
           content: _contentController.text.trim(),
@@ -273,12 +278,11 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
           );
         }
       } else {
-        // Edit existing post
         await _postService.updatePost(
           postId: widget.post!.id,
           title: titleValue,
           content: _contentController.text.trim(),
-          status: _selectedStatus, // Send the selected status for update
+          status: _selectedStatus,
         );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -291,6 +295,11 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
       }
       if (mounted) {
         widget.onPostSaved?.call();
+        if (_isEditMode) {
+          Navigator.of(context).pop(true); // Indicate success
+        } else {
+          _resetForm();
+        }
       }
     } on ApiException catch (e) {
       if (mounted) {
@@ -316,12 +325,6 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
           _isLoading = false;
         });
       }
-
-      if (_isEditMode) {
-        Navigator.of(context).pop();
-      }
-
-      _resetForm();
     }
   }
 
@@ -332,6 +335,7 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
     setState(() {
       _selectedImages.clear();
       _selectedImageMimeTypes.clear();
+      _selectedStatus = null;
     });
   }
 
@@ -373,7 +377,6 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
                 decoration: const InputDecoration(
                   labelText: 'عنوان پست (اختیاری)',
                   prefixIcon: Icon(Icons.title_rounded),
-                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 22),
@@ -383,11 +386,20 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
                   labelText: 'محتوای پست',
                   hintText: 'چه چیزی در ذهن دارید؟',
                   prefixIcon: const Icon(Icons.article_outlined),
-                  border: const OutlineInputBorder(),
                   alignLabelWithHint: true,
                   suffixIcon: Tooltip(
                     message: "بهبود متن با AI",
-                    child: IconButton(
+                    child: _isAiLoading
+                        ? Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2.0,
+                              color: colorScheme.secondary)),
+                    )
+                        : IconButton(
                       icon: Icon(
                         Icons.auto_awesome_rounded,
                         color: colorScheme.secondary,
@@ -406,35 +418,32 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
                 },
               ),
               const SizedBox(height: 22),
-
-              // Dropdown for post status, only shown in edit mode
               if (_isEditMode)
                 DropdownButtonFormField<PostStatus>(
                   value: _selectedStatus,
                   decoration: const InputDecoration(
                     labelText: 'تغییر وضعیت پست',
                     prefixIcon: Icon(Icons.flag_outlined),
-                    border: OutlineInputBorder(),
                   ),
                   items:
-                      PostStatus.values.map((PostStatus status) {
-                        String statusText;
-                        switch (status) {
-                          case PostStatus.published:
-                            statusText = 'انتشار';
-                            break;
-                          case PostStatus.draft:
-                            statusText = 'پیش نویس';
-                            break;
-                          case PostStatus.archived:
-                            statusText = 'آرشیو';
-                            break;
-                        }
-                        return DropdownMenuItem<PostStatus>(
-                          value: status,
-                          child: Text(statusText),
-                        );
-                      }).toList(),
+                  PostStatus.values.map((PostStatus status) {
+                    String statusText;
+                    switch (status) {
+                      case PostStatus.published:
+                        statusText = 'انتشار';
+                        break;
+                      case PostStatus.draft:
+                        statusText = 'پیش نویس';
+                        break;
+                      case PostStatus.archived:
+                        statusText = 'آرشیو';
+                        break;
+                    }
+                    return DropdownMenuItem<PostStatus>(
+                      value: status,
+                      child: Text(statusText),
+                    );
+                  }).toList(),
                   onChanged: (PostStatus? newValue) {
                     setState(() {
                       _selectedStatus = newValue;
@@ -442,13 +451,11 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
                   },
                   validator:
                       (value) =>
-                          value == null
-                              ? 'لطفا وضعیت پست را انتخاب کنید'
-                              : null,
+                  value == null
+                      ? 'لطفا وضعیت پست را انتخاب کنید'
+                      : null,
                 ),
               if (_isEditMode) const SizedBox(height: 22),
-
-              // Image selection section, only shown in create mode
               if (!_isEditMode) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -473,7 +480,7 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
                         ),
                         const SizedBox(width: 8),
                         Tooltip(
-                          message: "تولید تصویر با AI (به زودی)",
+                          message: "تولید تصویر با AI",
                           child: IconButton(
                             icon: Icon(
                               Icons.palette_outlined,
@@ -490,7 +497,6 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
                 const SizedBox(height: 10),
                 _buildImagePickerGridForCreateMode(),
               ] else if (_isEditMode && _initialPostFiles.isNotEmpty) ...[
-                // Display existing images in edit mode (non-editable)
                 Text(
                   'تصاویر پیوست شده (غیرقابل تغییر):',
                   style: textTheme.titleMedium,
@@ -505,8 +511,6 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
                 onPressed: _isLoading ? null : _savePost,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  backgroundColor: colorScheme.primary,
-                  foregroundColor: colorScheme.onPrimary,
                 ),
               ),
             ],
@@ -563,7 +567,6 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
                 child: Image.file(_selectedImages[index], fit: BoxFit.cover),
               ),
             ),
-            // Show delete button only in create mode
             if (!_isEditMode)
               Container(
                 margin: const EdgeInsets.all(4.0),
@@ -608,10 +611,10 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
       itemBuilder: (context, index) {
         final postFile = _initialPostFiles[index];
         final imageUrl =
-            (_apiService.getBaseUrl() +
-                (postFile.url.startsWith('/')
-                    ? postFile.url
-                    : '/${postFile.url}'));
+        (_apiService.getBaseUrl() +
+            (postFile.url.startsWith('/')
+                ? postFile.url
+                : '/${postFile.url}'));
         return ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: Image.network(
@@ -619,27 +622,27 @@ class _CreateEditPostScreenState extends State<CreateEditPostScreen> {
             fit: BoxFit.cover,
             errorBuilder:
                 (context, error, stackTrace) => Container(
-                  color: Colors.grey.shade300,
-                  child: const Icon(
-                    Icons.broken_image_outlined,
-                    color: Colors.grey,
-                  ),
-                ),
+              color: Colors.grey.shade300,
+              child: const Icon(
+                Icons.broken_image_outlined,
+                color: Colors.grey,
+              ),
+            ),
             loadingBuilder: (
-              BuildContext context,
-              Widget child,
-              ImageChunkEvent? loadingProgress,
-            ) {
+                BuildContext context,
+                Widget child,
+                ImageChunkEvent? loadingProgress,
+                ) {
               if (loadingProgress == null) return child;
               return Container(
                 color: Colors.grey.shade200,
                 child: Center(
                   child: CircularProgressIndicator(
                     value:
-                        loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
+                    loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                        : null,
                   ),
                 ),
               );

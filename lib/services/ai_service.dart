@@ -1,55 +1,115 @@
-import 'dart:io';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:path_provider/path_provider.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart' as intl;
+import 'package:peyvand/errors/api_exception.dart';
+import 'package:peyvand/helpers/token_manager.dart';
+import 'package:peyvand/features/profile/data/models/user_model.dart' as profile_user_model;
+import 'package:peyvand/features/ai_chat/data/models/ai_chat_message_dto.dart';
+import 'api_service.dart';
 
 class AiService {
-  Future<String> enhancePost(String content) async {
-    await Future.delayed(Duration(seconds: 1));
-    if (content.isEmpty) return '';
-    return 'بهبود یافته با هوش مصنوعی: $content\n[گرامر و وضوح این متن توسط هوش مصنوعی ارتقا یافته است.]';
-  }
+  final ApiService _apiService = ApiService();
+  final TokenManager _tokenManager = TokenManager();
+  final String _baseUrl = ApiService().getBaseUrl();
 
-  Future<String> getSimilarProfiles(List<String> skills) async {
-    await Future.delayed(Duration(seconds: 1));
-    return 'بر اساس مهارت‌های شما (${skills.join("، ")}), این افراد ممکن است برای شما جالب باشند...';
-  }
-
-  Future<String> getChatResponse(String message) async {
-    await Future.delayed(Duration(seconds: 1));
-    if (message.toLowerCase().contains('سلام')) {
-      return 'سلام! چطور می‌توانم در مسیر حرفه‌ای به شما کمک کنم؟';
-    }
-    return 'پیام شما دریافت شد: "$message". در حال پردازش...';
-  }
-
-  Future<List<String>> getSuggestions(String userProfile) async {
-    await Future.delayed(Duration(seconds: 1));
-    return [
-      'پروفایل خود را با آخرین دستاوردهایتان به‌روز کنید.',
-      'با ۵ متخصص جدید در حوزه کاری خود ارتباط برقرار کنید.',
-      'یک مقاله مرتبط با صنعت خود به اشتراک بگذارید.'
-    ];
-  }
-
-  Future<String> enhanceText(String currentText) async {
-    await Future.delayed(Duration(seconds: 1));
+  Future<String> enhancePostContent(String currentText, profile_user_model.User? currentUserProfile) async {
     if (currentText.isEmpty) return '';
-    return "متن بهبود یافته توسط هوش مصنوعی:\n$currentText\n... شفاف‌تر و جذاب‌تر!";
+
+    String customPrompt = "Improve the following post content for a university social media platform. Make it more engaging, clear, and professional. ";
+    if (currentUserProfile != null) {
+      customPrompt += "The author is ${currentUserProfile.displayName ?? currentUserProfile.email}. ";
+      if (currentUserProfile.university != null && currentUserProfile.university!.isNotEmpty) {
+        customPrompt += "They study at ${currentUserProfile.university}. ";
+      }
+      if (currentUserProfile.skills != null && currentUserProfile.skills!.isNotEmpty) {
+        customPrompt += "Their skills include: ${currentUserProfile.skills!.join(', ')}. ";
+      }
+    }
+    customPrompt += "The original post is:\n\"$currentText\"";
+
+
+    final List<AiMessageDto> messages = [
+      AiMessageDto(role: "user", content: "Please improve this text for a social media post: \"$currentText\"")
+    ];
+
+    final ChatCompletionDto completionDto = ChatCompletionDto(
+      messages: messages,
+      customPrompt: customPrompt,
+    );
+
+    try {
+      final responseJson = await _sendToAiCompletion(completionDto);
+      return responseJson['response'] as String? ?? currentText;
+    } catch (e) {
+      print("Error enhancing post with AI: $e");
+      if (e is ApiException && e.messages.isNotEmpty) {
+        throw ApiException(messages: e.messages);
+      }
+      throw ApiException(messages: ['خطا در بهبود متن با هوش مصنوعی.']);
+    }
   }
 
-  Future<File?> generateImageWithAI(String prompt) async {
-    await Future.delayed(Duration(seconds: 2));
-    try {
-      final byteData = await rootBundle.load('assets/images/logo.png');
-      final buffer = byteData.buffer;
-      final tempDir = await getTemporaryDirectory();
-      final fileName = 'ai_generated_image_${DateTime.now().millisecondsSinceEpoch}.png';
-      final file = File('${tempDir.path}/$fileName');
-      await file.writeAsBytes(buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-      return file;
-    } catch (e) {
-      print("Error generating mock AI image: $e");
-      return null;
+
+  Future<Map<String, dynamic>> getAiChatCompletion(List<AiMessageDto> messages, profile_user_model.User? currentUserProfile) async {
+    String customPrompt = "You are a helpful and friendly AI assistant for university students on a social platform called 'Peyvand'. ";
+    if (currentUserProfile != null) {
+      customPrompt += "The user you are talking to is ${currentUserProfile.displayName ?? currentUserProfile.email}. ";
+      if (currentUserProfile.university != null && currentUserProfile.university!.isNotEmpty) {
+        customPrompt += "They study at ${currentUserProfile.university}. ";
+      }
+      if (currentUserProfile.bio != null && currentUserProfile.bio!.isNotEmpty) {
+        customPrompt += "Their bio is: \"${currentUserProfile.bio}\". ";
+      }
+      if (currentUserProfile.skills != null && currentUserProfile.skills!.isNotEmpty) {
+        customPrompt += "Their skills include: ${currentUserProfile.skills!.join(', ')}. ";
+      }
+      if (currentUserProfile.studentCode != null && currentUserProfile.studentCode!.isNotEmpty) {
+        customPrompt += "Their student code is: ${currentUserProfile.studentCode}. ";
+      }
+      customPrompt += "Today's date is ${intl.DateFormat('yyyy-MM-dd').format(DateTime.now())}.";
+    }
+
+    final ChatCompletionDto completionDto = ChatCompletionDto(
+      messages: messages,
+      customPrompt: customPrompt,
+    );
+    return _sendToAiCompletion(completionDto);
+  }
+
+  Future<Map<String, dynamic>> _sendToAiCompletion(ChatCompletionDto dto) async {
+    final token = await _tokenManager.getToken();
+    if (token == null) {
+      throw ApiException(messages: ['کاربر وارد نشده است.']);
+    }
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/ai/completion'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode(dto.toJson()),
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } else {
+      final responseBody = jsonDecode(response.body);
+      List<String> errorMessages = ['خطای ناشناخته از سرور AI'];
+      String? errorType = responseBody['error'] as String?;
+      if (responseBody['message'] != null) {
+        if (responseBody['message'] is List) {
+          errorMessages = List<String>.from(responseBody['message'].map((m) => m.toString()));
+        } else if (responseBody['message'] is String) {
+          errorMessages = [responseBody['message'] as String];
+        }
+      }
+      throw ApiException(
+        errorType: errorType,
+        messages: errorMessages,
+        statusCode: response.statusCode,
+      );
     }
   }
 }

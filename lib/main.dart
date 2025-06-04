@@ -12,6 +12,7 @@ import 'package:peyvand/features/posts/data/models/post_model.dart';
 import 'package:peyvand/features/posts/presentation/screens/single_post_screen.dart';
 import 'package:peyvand/features/posts/presentation/screens/user_posts_screen.dart';
 import 'package:peyvand/features/profile/presentation/screens/other_user_profile_screen.dart';
+import 'package:peyvand/features/ai_chat/presentation/screens/ai_chat_screen.dart'; // Added
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -95,6 +96,7 @@ class MyApp extends StatelessWidget {
         MainTabScreen.routeName: (context) => const MainTabScreen(),
         HomeScreen.routeName: (context) => const HomeScreen(),
         UserPostsScreen.routeName: (context) => const UserPostsScreen(),
+        AiChatScreen.routeName: (context) => const AiChatScreen(), // Added
         CreateEditPostScreen.routeName: (context) =>
         const CreateEditPostScreen(),
         SinglePostScreen.routeName: (context) {
