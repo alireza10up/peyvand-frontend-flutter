@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:peyvand/errors/api_exception.dart';
 import 'package:peyvand/features/posts/data/models/post_model.dart';
 import 'package:peyvand/features/posts/data/services/post_service.dart';
@@ -140,8 +141,8 @@ class _PostCardWidgetState extends State<PostCardWidget> {
         textColor = Colors.black.withOpacity(0.7);
         iconData = Icons.inventory_2_outlined;
         break;
-      default: // Should not happen if status is always valid
-        text = status.toString().split('.').last; // Fallback
+      default:
+        text = status.toString().split('.').last;
         backgroundColor = Colors.grey.shade400;
         iconData = Icons.label_important_outline_rounded;
     }
@@ -200,9 +201,9 @@ class _PostCardWidgetState extends State<PostCardWidget> {
       backgroundColor: Colors.transparent,
       builder: (BuildContext modalContext) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.7, //
-          minChildSize: 0.4, //
-          maxChildSize: 0.85, //
+          initialChildSize: 0.7,
+          minChildSize: 0.4,
+          maxChildSize: 0.85,
           expand: false,
           builder: (_, scrollController) {
             return CommentsBottomSheetWidget(
@@ -226,6 +227,46 @@ class _PostCardWidgetState extends State<PostCardWidget> {
         post.user.profilePictureRelativeUrl!.isNotEmpty) {
       userAvatarUrl =
           _apiService.getBaseUrl() + post.user.profilePictureRelativeUrl!;
+    }
+
+    Widget contentWidget;
+    if (widget.onTapCard != null) {
+      contentWidget = Text(
+        post.content,
+        style: textTheme.bodyLarge?.copyWith(height: 1.5),
+        maxLines: 5,
+        overflow: TextOverflow.ellipsis,
+      );
+    } else {
+      contentWidget = MarkdownBody(
+        data: post.content,
+        selectable: true,
+        shrinkWrap: true,
+        styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
+          p: textTheme.bodyLarge?.copyWith(height: 1.5),
+          strong: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold, height: 1.5),
+          em: textTheme.bodyLarge?.copyWith(fontStyle: FontStyle.italic, height: 1.5),
+          code: textTheme.bodyMedium?.copyWith(
+            fontFamily: 'monospace',
+            backgroundColor: colorScheme.onSurface.withOpacity(0.05),
+            fontSize: 13,
+            height: 1.4,
+          ),
+          blockquoteDecoration: BoxDecoration(
+            color: colorScheme.onSurface.withOpacity(0.05),
+            border: Border(
+              left: BorderSide(
+                color: colorScheme.primary.withOpacity(0.5),
+                width: 4,
+              ),
+            ),
+          ),
+          listBullet: textTheme.bodyLarge?.copyWith(height: 1.5),
+          horizontalRuleDecoration: BoxDecoration(
+              border: Border(top: BorderSide(width: 1.0, color: theme.dividerColor))
+          ),
+        ),
+      );
     }
 
     return Card(
@@ -343,11 +384,7 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                 ),
                 const SizedBox(height: 8),
               ],
-              Text(
-                post.content,
-                style: textTheme.bodyLarge?.copyWith(height: 1.5),
-                  maxLines: widget.onTapCard != null ? 5 : null,
-                  overflow: widget.onTapCard != null ? TextOverflow.ellipsis : TextOverflow.visible  ),
+              contentWidget,
               const SizedBox(height: 10),
               if (widget.showStatusChip) ...[
                 _buildStatusChip(post.status),

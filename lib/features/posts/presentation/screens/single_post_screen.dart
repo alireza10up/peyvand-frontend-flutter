@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:peyvand/features/posts/data/models/post_model.dart';
 import 'package:peyvand/features/posts/data/services/post_service.dart';
 import 'package:peyvand/features/profile/presentation/screens/other_user_profile_screen.dart';
@@ -169,9 +170,9 @@ class _SinglePostScreenState extends State<SinglePostScreen> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color:
-                _currentImagePage == index
-                    ? colorScheme.primary
-                    : colorScheme.onSurface.withOpacity(0.3),
+            _currentImagePage == index
+                ? colorScheme.primary
+                : colorScheme.onSurface.withOpacity(0.3),
           ),
         );
       }),
@@ -182,19 +183,20 @@ class _SinglePostScreenState extends State<SinglePostScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
 
     String? userAvatarUrl;
     if (widget.post.user.profilePictureRelativeUrl != null &&
         widget.post.user.profilePictureRelativeUrl!.isNotEmpty) {
       userAvatarUrl =
           _apiService.getBaseUrl() +
-          widget.post.user.profilePictureRelativeUrl!;
+              widget.post.user.profilePictureRelativeUrl!;
     }
 
     final imageFiles =
-        widget.post.files
-            .where((file) => file.mimetype.startsWith('image/'))
-            .toList();
+    widget.post.files
+        .where((file) => file.mimetype.startsWith('image/'))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.post.title ?? 'جزئیات پست')),
@@ -211,18 +213,18 @@ class _SinglePostScreenState extends State<SinglePostScreen> {
                 child: Row(
                   children: [
                     CircleAvatar(
-                      radius: 22, // کمی کوچکتر از نسخه قبلی برای تناسب بهتر
+                      radius: 22,
                       backgroundImage:
-                          userAvatarUrl != null
-                              ? NetworkImage(userAvatarUrl)
-                              : null,
+                      userAvatarUrl != null
+                          ? NetworkImage(userAvatarUrl)
+                          : null,
                       child:
-                          userAvatarUrl == null
-                              ? const Icon(
-                                Icons.person_outline_rounded,
-                                size: 24,
-                              )
-                              : null,
+                      userAvatarUrl == null
+                          ? const Icon(
+                        Icons.person_outline_rounded,
+                        size: 24,
+                      )
+                          : null,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -284,13 +286,13 @@ class _SinglePostScreenState extends State<SinglePostScreen> {
                       itemBuilder: (context, index) {
                         final file = imageFiles[index];
                         final imageUrl =
-                            (file.url.startsWith('http') ||
-                                    file.url.startsWith('https'))
+                        (file.url.startsWith('http') ||
+                            file.url.startsWith('https'))
+                            ? file.url
+                            : _apiService.getBaseUrl() +
+                            (file.url.startsWith('/')
                                 ? file.url
-                                : _apiService.getBaseUrl() +
-                                    (file.url.startsWith('/')
-                                        ? file.url
-                                        : '/${file.url}');
+                                : '/${file.url}');
                         return Container(
                           margin: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: ClipRRect(
@@ -299,38 +301,38 @@ class _SinglePostScreenState extends State<SinglePostScreen> {
                               imageUrl,
                               fit: BoxFit.contain,
                               loadingBuilder: (
-                                context,
-                                child,
-                                loadingProgress,
-                              ) {
+                                  context,
+                                  child,
+                                  loadingProgress,
+                                  ) {
                                 if (loadingProgress == null) return child;
                                 return Center(
                                   child: CircularProgressIndicator(
                                     value:
-                                        loadingProgress.expectedTotalBytes !=
-                                                null
-                                            ? loadingProgress
-                                                    .cumulativeBytesLoaded /
-                                                loadingProgress
-                                                    .expectedTotalBytes!
-                                            : null,
+                                    loadingProgress.expectedTotalBytes !=
+                                        null
+                                        ? loadingProgress
+                                        .cumulativeBytesLoaded /
+                                        loadingProgress
+                                            .expectedTotalBytes!
+                                        : null,
                                   ),
                                 );
                               },
                               errorBuilder:
                                   (context, error, stackTrace) => Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade200,
-                                      borderRadius: BorderRadius.circular(12.0),
-                                    ),
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.broken_image_outlined,
-                                        size: 50,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.broken_image_outlined,
+                                    size: 50,
+                                    color: Colors.grey,
                                   ),
+                                ),
+                              ),
                             ),
                           ),
                         );
@@ -348,12 +350,51 @@ class _SinglePostScreenState extends State<SinglePostScreen> {
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              widget.post.content,
-              style: textTheme.bodyLarge?.copyWith(
-                fontSize: 15,
-                height: 1.65,
-                color: colorScheme.onSurface.withOpacity(0.85),
+            child: MarkdownBody(
+              data: widget.post.content,
+              selectable: true,
+              styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
+                p: textTheme.bodyLarge?.copyWith(
+                  fontSize: 15,
+                  height: 1.65,
+                  color: colorScheme.onSurface.withOpacity(0.85),
+                ),
+                strong: textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  height: 1.65,
+                  color: colorScheme.onSurface.withOpacity(0.85),
+                ),
+                em: textTheme.bodyLarge?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 15,
+                  height: 1.65,
+                  color: colorScheme.onSurface.withOpacity(0.85),
+                ),
+                code: textTheme.bodyMedium?.copyWith(
+                  fontFamily: 'monospace',
+                  backgroundColor: colorScheme.onSurface.withOpacity(0.05),
+                  color: colorScheme.onSurface.withOpacity(0.85),
+                  fontSize: 14,
+                  height: 1.6,
+                ),
+                blockquoteDecoration: BoxDecoration(
+                  color: colorScheme.onSurface.withOpacity(0.05),
+                  border: Border(
+                    left: BorderSide(
+                      color: colorScheme.primary.withOpacity(0.5),
+                      width: 4,
+                    ),
+                  ),
+                ),
+                listBullet: textTheme.bodyLarge?.copyWith(
+                  fontSize: 15,
+                  height: 1.65,
+                  color: colorScheme.onSurface.withOpacity(0.85),
+                ),
+                horizontalRuleDecoration: BoxDecoration(
+                    border: Border(top: BorderSide(width: 1.0, color: theme.dividerColor))
+                ),
               ),
             ),
           ),
@@ -375,25 +416,25 @@ class _SinglePostScreenState extends State<SinglePostScreen> {
                     ),
                   ),
                   icon:
-                      _isTogglingLike || _isLoadingLikeDetails
-                          ? SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: colorScheme.primary,
-                            ),
-                          )
-                          : Icon(
-                            isLikedByCurrentUser
-                                ? Icons.thumb_up_alt_rounded
-                                : Icons.thumb_up_alt_outlined,
-                            size: 20,
-                            color:
-                                isLikedByCurrentUser
-                                    ? AppTheme.primaryColor
-                                    : colorScheme.onSurfaceVariant,
-                          ),
+                  _isTogglingLike || _isLoadingLikeDetails
+                      ? SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colorScheme.primary,
+                    ),
+                  )
+                      : Icon(
+                    isLikedByCurrentUser
+                        ? Icons.thumb_up_alt_rounded
+                        : Icons.thumb_up_alt_outlined,
+                    size: 20,
+                    color:
+                    isLikedByCurrentUser
+                        ? AppTheme.primaryColor
+                        : colorScheme.onSurfaceVariant,
+                  ),
                   label: Text(
                     _isLoadingLikeDetails ? "..." : "$likeCount لایک",
                     style: textTheme.bodyMedium?.copyWith(
@@ -402,9 +443,9 @@ class _SinglePostScreenState extends State<SinglePostScreen> {
                     ),
                   ),
                   onPressed:
-                      _isLoadingLikeDetails || _currentUserId == null
-                          ? null
-                          : _handleLikeButtonTap,
+                  _isLoadingLikeDetails || _currentUserId == null
+                      ? null
+                      : _handleLikeButtonTap,
                 ),
                 TextButton.icon(
                   style: TextButton.styleFrom(
