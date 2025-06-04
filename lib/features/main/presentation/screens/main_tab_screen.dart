@@ -6,7 +6,7 @@ import 'package:peyvand/features/connections/presentation/screens/network_screen
 import 'package:peyvand/features/chat/presentation/screens/chat_list_screen.dart';
 import 'package:peyvand/features/chat/data/providers/chat_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:peyvand/features/ai_chat/presentation/screens/ai_chat_screen.dart'; // Added
+import 'package:peyvand/features/ai_chat/presentation/screens/ai_chat_screen.dart';
 
 class MainTabScreen extends StatefulWidget {
   const MainTabScreen({super.key});
@@ -41,7 +41,8 @@ class _MainTabScreenState extends State<MainTabScreen> {
         final unreadCount = chatProvider?.totalUnreadCount ?? 0;
         Widget icon = const Icon(Icons.chat_bubble_outline_rounded);
         Widget activeIcon = const Icon(Icons.chat_bubble_rounded);
-        final currentIcon = _selectedIndex == 3 ? activeIcon : icon;
+        // Corrected index for Chat tab
+        final currentIcon = _selectedIndex == 4 ? activeIcon : icon;
 
         if (unreadCount > 0) {
           return Badge(
@@ -78,7 +79,6 @@ class _MainTabScreenState extends State<MainTabScreen> {
             label: 'پست‌ها',
           ),
           const BottomNavigationBarItem(
-            // New AI Assistant Tab
             icon: Icon(Icons.assistant_outlined),
             activeIcon: Icon(Icons.assistant_rounded),
             label: 'دستیار',
