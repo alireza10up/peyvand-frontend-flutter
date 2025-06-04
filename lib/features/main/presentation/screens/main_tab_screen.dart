@@ -6,6 +6,7 @@ import 'package:peyvand/features/connections/presentation/screens/network_screen
 import 'package:peyvand/features/chat/presentation/screens/chat_list_screen.dart';
 import 'package:peyvand/features/chat/data/providers/chat_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:peyvand/features/ai_chat/presentation/screens/ai_chat_screen.dart'; // Added
 
 class MainTabScreen extends StatefulWidget {
   const MainTabScreen({super.key});
@@ -23,6 +24,7 @@ class _MainTabScreenState extends State<MainTabScreen> {
     const HomeScreen(),
     const NetworkScreen(),
     const UserPostsScreen(),
+    const AiChatScreen(),
     const ChatListScreen(),
     const ProfileScreen(),
   ];
@@ -57,10 +59,7 @@ class _MainTabScreenState extends State<MainTabScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _widgetOptions,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           const BottomNavigationBarItem(
@@ -78,10 +77,13 @@ class _MainTabScreenState extends State<MainTabScreen> {
             activeIcon: Icon(Icons.post_add),
             label: 'پست‌ها',
           ),
-          BottomNavigationBarItem(
-            icon: _buildChatBadge(),
-            label: 'گفتگوها',
+          const BottomNavigationBarItem(
+            // New AI Assistant Tab
+            icon: Icon(Icons.assistant_outlined),
+            activeIcon: Icon(Icons.assistant_rounded),
+            label: 'دستیار',
           ),
+          BottomNavigationBarItem(icon: _buildChatBadge(), label: 'گفتگوها'),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_rounded),
             activeIcon: Icon(Icons.person_rounded),
@@ -89,7 +91,7 @@ class _MainTabScreenState extends State<MainTabScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        backgroundColor: colorScheme.surfaceContainerHighest, // Slightly different background for more depth
+        backgroundColor: colorScheme.surfaceContainerHighest,
         selectedItemColor: colorScheme.primary,
         unselectedItemColor: colorScheme.onSurfaceVariant.withOpacity(0.75),
         onTap: _onItemTapped,
