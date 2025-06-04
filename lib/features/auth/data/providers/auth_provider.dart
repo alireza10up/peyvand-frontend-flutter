@@ -9,8 +9,10 @@ class AuthProvider with ChangeNotifier {
 
   User? _currentUser;
   bool _isAuthenticated = false;
-  bool _isLoading = true;
+  bool _isInitialLoading = true;
+  bool _isActionLoading = false;
   String? _authMessage;
+  bool _disposed = false;
 
   User? get currentUser => _currentUser;
 
@@ -18,7 +20,9 @@ class AuthProvider with ChangeNotifier {
 
   bool get isAuthenticated => _isAuthenticated;
 
-  bool get isLoading => _isLoading;
+  bool get isInitialLoading => _isInitialLoading;
+
+  bool get isActionLoading => _isActionLoading;
 
   String? get authMessage => _authMessage;
 
@@ -26,123 +30,190 @@ class AuthProvider with ChangeNotifier {
     _checkLoginStatus();
   }
 
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
+
   Future<void> _checkLoginStatus() async {
-    _isLoading = true;
+    if (_disposed) return;
+
+    _isInitialLoading = true;
+    notifyListeners();
+
     _isAuthenticated = await _authService.isAuthenticated;
+    if (_disposed) return;
+
     if (_isAuthenticated) {
       await _fetchCurrentUserProfile();
+      if (_disposed) return;
+
       if (_currentUser == null) {
         _isAuthenticated = false;
         await _authService.logout();
-        _authMessage = "خطا در بارگذاری اطلاعات کاربری. لطفاً دوباره وارد شوید.";
+        if (_disposed) return;
+        _authMessage =
+            "خطا در بارگذاری اطلاعات کاربری. لطفاً دوباره وارد شوید.";
       }
     } else {
       _currentUser = null;
     }
-    _isLoading = false;
+
+    _isInitialLoading = false;
     notifyListeners();
   }
 
   Future<void> _fetchCurrentUserProfile() async {
-    if (!_isAuthenticated) {
+    if (_disposed || !_isAuthenticated) {
       _currentUser = null;
       return;
     }
+
     try {
       _currentUser = await _userService.fetchUserProfile();
+      if (_disposed) return;
     } catch (e) {
+      if (_disposed) return;
       print("Error fetching user profile in AuthProvider: $e");
       _currentUser = null;
       _authMessage = "خطا در دریافت اطلاعات پروفایل.";
     }
-    notifyListeners();
   }
 
-  Future<void> login(String email, String password) async {
-    _isLoading = true;
+  Future<bool> login(String email, String password) async {
+    if (_disposed) return false;
+
+    _isActionLoading = true;
     _authMessage = null;
     _currentUser = null;
     notifyListeners();
 
-    final result = await _authService.login(email, password);
+    try {
+      final result = await _authService.login(email, password);
+      if (_disposed) return false;
 
-    if (result['success'] == true) {
-      _isAuthenticated = true;
-      try {
+      if (result['success'] == true) {
+        _isAuthenticated = true;
         await _fetchCurrentUserProfile();
+        if (_disposed) return false;
+
         if (_currentUser != null) {
-          _authMessage = result['message'];
+          _authMessage = result['message'] ?? 'ورود با موفقیت انجام شد!';
+          _isActionLoading = false;
+          notifyListeners();
+          return true;
         } else {
           _isAuthenticated = false;
-          _authMessage = "ورود موفق بود اما دریافت اطلاعات پروفایل با خطا مواجه شد.";
+          _authMessage =
+              "ورود موفق بود اما دریافت اطلاعات پروفایل با خطا مواجه شد.";
+          _isActionLoading = false;
+          notifyListeners();
+          return false;
         }
-      } catch (e) {
-        print("Login successful, but failed to fetch profile: $e");
+      } else {
         _isAuthenticated = false;
         _currentUser = null;
-        _authMessage = "ورود موفق بود اما دریافت اطلاعات پروفایل با خطا مواجه شد.";
+        _authMessage =
+            result['message'] ?? 'خطا در ورود. لطفاً دوباره تلاش کنید.';
+        _isActionLoading = false;
+        notifyListeners();
+        return false;
       }
-    } else {
+    } catch (e) {
+      if (_disposed) return false;
+      print("Login error: $e");
       _isAuthenticated = false;
       _currentUser = null;
-      _authMessage = result['message'];
+      _authMessage = e.toString();
+      _isActionLoading = false;
+      notifyListeners();
+      return false;
     }
-
-    _isLoading = false;
-    notifyListeners();
   }
 
-  Future<void> register({
+  Future<bool> register({
     required String email,
     required String password,
   }) async {
-    _isLoading = true;
+    if (_disposed) return false;
+
+    _isActionLoading = true;
     _authMessage = null;
     _currentUser = null;
     notifyListeners();
 
-    final result = await _authService.register(
-      email: email,
-      password: password,
-    );
+    try {
+      final result = await _authService.register(
+        email: email,
+        password: password,
+      );
+      if (_disposed) return false;
 
-    if (result['success'] == true) {
-      _isAuthenticated = true;
-      try {
+      if (result['success'] == true) {
+        _isAuthenticated = true;
         await _fetchCurrentUserProfile();
+        if (_disposed) return false;
+
         if (_currentUser != null) {
-          _authMessage = result['message'] ?? 'ثبت نام و ورود با موفقیت انجام شد.';
+          _authMessage =
+              result['message'] ?? 'ثبت نام و ورود با موفقیت انجام شد.';
+          _isActionLoading = false;
+          notifyListeners();
+          return true;
         } else {
           _isAuthenticated = false;
-          _authMessage = "ثبت نام موفق بود اما دریافت اطلاعات پروفایل با خطا مواجه شد.";
+          _authMessage =
+              "ثبت نام موفق بود اما دریافت اطلاعات پروفایل با خطا مواجه شد.";
+          _isActionLoading = false;
+          notifyListeners();
+          return false;
         }
-      } catch (e) {
-        print("Register successful, but failed to fetch profile: $e");
+      } else {
         _isAuthenticated = false;
-        _currentUser = null;
-        _authMessage = "ثبت نام موفق بود اما دریافت اطلاعات پروفایل با خطا مواجه شد.";
+        _authMessage =
+            result['message'] ?? 'خطا در ثبت نام. لطفاً دوباره تلاش کنید.';
+        _isActionLoading = false;
+        notifyListeners();
+        return false;
       }
-
-    } else {
+    } catch (e) {
+      if (_disposed) return false;
+      print("Register error: $e");
       _isAuthenticated = false;
-      _authMessage = result['message'];
+      _currentUser = null;
+      _authMessage = e.toString();
+      _isActionLoading = false;
+      notifyListeners();
+      return false;
     }
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> logout() async {
-    _isLoading = true;
+    if (_disposed) return;
+
+    _isActionLoading = true;
     notifyListeners();
+
     await _authService.logout();
+    if (_disposed) return;
+
     _isAuthenticated = false;
     _currentUser = null;
     _authMessage = null;
-    _isLoading = false;
+    _isActionLoading = false;
     notifyListeners();
   }
 
   void clearMessage() {
+    if (_disposed) return;
     _authMessage = null;
     notifyListeners();
   }
