@@ -5,7 +5,7 @@ import 'package:peyvand/features/chat/data/models/message_status_enum.dart';
 import 'package:peyvand/features/chat/data/services/chat_http_service.dart';
 import 'package:peyvand/features/chat/data/services/socket_service.dart';
 import 'package:peyvand/features/profile/data/models/user_model.dart'
-as profile_user_model;
+    as profile_user_model;
 import 'dart:async';
 import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
@@ -21,6 +21,15 @@ class ChatProvider with ChangeNotifier {
   final String _currentUserId;
   final profile_user_model.User _currentUserProfile;
 
+  bool _disposed = false;
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
+  }
+
   List<ConversationModel> _conversations = [];
   Map<int, List<ChatMessageModel>> _messagesByConversation = {};
   Map<int, bool> _isLoadingMessages = {};
@@ -31,7 +40,9 @@ class ChatProvider with ChangeNotifier {
   int? _activeConversationId;
 
   List<ConversationModel> get conversations => _conversations;
+
   bool get isLoadingConversations => _isLoadingConversations;
+
   Map<int, TypingUserModel?> get typingUsersByConversation =>
       _typingUsersByConversation;
 
@@ -47,8 +58,8 @@ class ChatProvider with ChangeNotifier {
       markMessagesAsRead(conversationId);
     }
   }
-  int? getActiveConversationId() => _activeConversationId;
 
+  int? getActiveConversationId() => _activeConversationId;
 
   Future<void> _initializeSocket() async {
     await _socketService.connect();
@@ -68,8 +79,9 @@ class ChatProvider with ChangeNotifier {
 
   void _handleNewMessage(dynamic data) {
     try {
-      final messageFromServer =
-      ChatMessageModel.fromJson(data as Map<String, dynamic>);
+      final messageFromServer = ChatMessageModel.fromJson(
+        data as Map<String, dynamic>,
+      );
       final conversationId = messageFromServer.conversationId;
 
       if (!_messagesByConversation.containsKey(conversationId)) {
@@ -77,19 +89,24 @@ class ChatProvider with ChangeNotifier {
       }
       final messageList = _messagesByConversation[conversationId]!;
 
-      final existingMessageIndex = messageList
-          .indexWhere((m) => m.id == messageFromServer.id && m.id != -1);
+      final existingMessageIndex = messageList.indexWhere(
+        (m) => m.id == messageFromServer.id && m.id != -1,
+      );
 
       if (existingMessageIndex != -1) {
         messageList[existingMessageIndex] = messageFromServer;
       } else {
         bool replacedOptimistic = false;
         if (messageFromServer.sender.id == _currentUserId) {
-          final optimisticIndex = messageList.lastIndexWhere((m) =>
-          m.id == -1 &&
-              m.sender.id == _currentUserId &&
-              (m.content == messageFromServer.content || (m.content == null && messageFromServer.content == null)) &&
-              messageFromServer.createdAt.difference(m.createdAt).inSeconds < 15);
+          final optimisticIndex = messageList.lastIndexWhere(
+            (m) =>
+                m.id == -1 &&
+                m.sender.id == _currentUserId &&
+                (m.content == messageFromServer.content ||
+                    (m.content == null && messageFromServer.content == null)) &&
+                messageFromServer.createdAt.difference(m.createdAt).inSeconds <
+                    15,
+          );
           if (optimisticIndex != -1) {
             messageList[optimisticIndex] = messageFromServer;
             replacedOptimistic = true;
@@ -101,9 +118,13 @@ class ChatProvider with ChangeNotifier {
       }
 
       messageList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-      _updateConversationListWithMessage(messageFromServer, isNewUnreadMessage: messageFromServer.sender.id != _currentUserId);
+      _updateConversationListWithMessage(
+        messageFromServer,
+        isNewUnreadMessage: messageFromServer.sender.id != _currentUserId,
+      );
 
-      if (_activeConversationId == conversationId && messageFromServer.sender.id != _currentUserId) {
+      if (_activeConversationId == conversationId &&
+          messageFromServer.sender.id != _currentUserId) {
         markMessagesAsRead(conversationId);
       }
 
@@ -113,17 +134,23 @@ class ChatProvider with ChangeNotifier {
     }
   }
 
-  void _updateConversationListWithMessage(ChatMessageModel message, {bool isNewUnreadMessage = false}) {
-    final index =
-    _conversations.indexWhere((c) => c.id == message.conversationId);
+  void _updateConversationListWithMessage(
+    ChatMessageModel message, {
+    bool isNewUnreadMessage = false,
+  }) {
+    final index = _conversations.indexWhere(
+      (c) => c.id == message.conversationId,
+    );
     if (index != -1) {
       final conversation = _conversations[index];
       conversation.lastMessage = message;
       conversation.updatedAt = message.createdAt;
 
-      if (isNewUnreadMessage && _activeConversationId != message.conversationId) {
+      if (isNewUnreadMessage &&
+          _activeConversationId != message.conversationId) {
         conversation.unreadCount = (conversation.unreadCount) + 1;
-      } else if (message.sender.id == _currentUserId || _activeConversationId == message.conversationId) {
+      } else if (message.sender.id == _currentUserId ||
+          _activeConversationId == message.conversationId) {
         conversation.unreadCount = 0;
       }
       _conversations.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
@@ -146,22 +173,29 @@ class ChatProvider with ChangeNotifier {
         final List<ChatMessageModel> updatedMessages = [];
         for (var msg in _messagesByConversation[conversationId]!) {
           ChatMessageModel updatedMsg = msg;
-          if (msg.sender.id == _currentUserId && readerId != _currentUserId && status == MessageStatus.READ && msg.status != MessageStatus.READ) {
+          if (msg.sender.id == _currentUserId &&
+              readerId != _currentUserId &&
+              status == MessageStatus.READ &&
+              msg.status != MessageStatus.READ) {
             updatedMsg = msg.copyWith(status: MessageStatus.READ);
             messageListUpdated = true;
-          }
-          else if (msg.sender.id != _currentUserId && readerId == _currentUserId && status == MessageStatus.READ && msg.status != MessageStatus.READ) {
+          } else if (msg.sender.id != _currentUserId &&
+              readerId == _currentUserId &&
+              status == MessageStatus.READ &&
+              msg.status != MessageStatus.READ) {
             updatedMsg = msg.copyWith(status: MessageStatus.READ);
             messageListUpdated = true;
           }
           updatedMessages.add(updatedMsg);
         }
-        if(messageListUpdated) {
+        if (messageListUpdated) {
           _messagesByConversation[conversationId] = updatedMessages;
         }
       }
 
-      final convIndex = _conversations.indexWhere((c) => c.id == conversationId);
+      final convIndex = _conversations.indexWhere(
+        (c) => c.id == conversationId,
+      );
       if (convIndex != -1) {
         final conversation = _conversations[convIndex];
         if (readerId == _currentUserId && status == MessageStatus.READ) {
@@ -169,14 +203,19 @@ class ChatProvider with ChangeNotifier {
             conversation.unreadCount = 0;
             conversationListUpdated = true;
           }
-          if (conversation.lastMessage?.sender.id != _currentUserId && conversation.lastMessage?.status != MessageStatus.READ) {
-            conversation.lastMessage = conversation.lastMessage?.copyWith(status: MessageStatus.READ);
+          if (conversation.lastMessage?.sender.id != _currentUserId &&
+              conversation.lastMessage?.status != MessageStatus.READ) {
+            conversation.lastMessage = conversation.lastMessage?.copyWith(
+              status: MessageStatus.READ,
+            );
             conversationListUpdated = true;
           }
-        }
-        else if (readerId != _currentUserId && status == MessageStatus.READ) {
-          if (conversation.lastMessage?.sender.id == _currentUserId && conversation.lastMessage?.status != MessageStatus.READ) {
-            conversation.lastMessage = conversation.lastMessage?.copyWith(status: MessageStatus.READ);
+        } else if (readerId != _currentUserId && status == MessageStatus.READ) {
+          if (conversation.lastMessage?.sender.id == _currentUserId &&
+              conversation.lastMessage?.status != MessageStatus.READ) {
+            conversation.lastMessage = conversation.lastMessage?.copyWith(
+              status: MessageStatus.READ,
+            );
             conversationListUpdated = true;
           }
         }
@@ -190,14 +229,15 @@ class ChatProvider with ChangeNotifier {
     }
   }
 
-
   void _handleUserTyping(dynamic data) {
     final conversationId = data['conversationId'] as int;
     final userId = data['userId'].toString();
     final userName = data['userName'] as String?;
     if (userId != _currentUserId) {
-      _typingUsersByConversation[conversationId] =
-          TypingUserModel(id: userId, name: userName ?? 'کاربر');
+      _typingUsersByConversation[conversationId] = TypingUserModel(
+        id: userId,
+        name: userName ?? 'کاربر',
+      );
       notifyListeners();
     }
   }
@@ -217,8 +257,9 @@ class ChatProvider with ChangeNotifier {
     if (!forceRefresh) notifyListeners();
 
     try {
-      _conversations =
-      await _chatHttpService.getUserConversations(_currentUserId);
+      _conversations = await _chatHttpService.getUserConversations(
+        _currentUserId,
+      );
       _conversations.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     } catch (e) {
       debugPrint('Error fetching conversations: $e');
@@ -228,8 +269,10 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchMessages(int conversationId,
-      {bool loadMore = false}) async {
+  Future<void> fetchMessages(
+    int conversationId, {
+    bool loadMore = false,
+  }) async {
     if ((_isLoadingMessages[conversationId] ?? false) && !loadMore) return;
 
     _isLoadingMessages[conversationId] = true;
@@ -240,20 +283,23 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final newMessages =
-      await _chatHttpService.getMessagesForConversation(conversationId);
+      final newMessages = await _chatHttpService.getMessagesForConversation(
+        conversationId,
+      );
       if (!mounted) return;
 
       if (newMessages.isEmpty && loadMore) {
         _hasMoreMessages[conversationId] = false;
       }
 
-      final currentMessages =
-      List<ChatMessageModel>.from(_messagesByConversation[conversationId] ?? []);
+      final currentMessages = List<ChatMessageModel>.from(
+        _messagesByConversation[conversationId] ?? [],
+      );
 
       for (var newMessage in newMessages) {
-        final existingIndex =
-        currentMessages.indexWhere((m) => m.id == newMessage.id && m.id != -1);
+        final existingIndex = currentMessages.indexWhere(
+          (m) => m.id == newMessage.id && m.id != -1,
+        );
         if (existingIndex == -1) {
           currentMessages.add(newMessage);
         } else {
@@ -269,7 +315,8 @@ class ChatProvider with ChangeNotifier {
       }
     } catch (e) {
       debugPrint(
-          'Error fetching messages for conversation $conversationId: $e');
+        'Error fetching messages for conversation $conversationId: $e',
+      );
     }
     _isLoadingMessages[conversationId] = false;
     notifyListeners();
@@ -290,8 +337,9 @@ class ChatProvider with ChangeNotifier {
       id: -1,
       tempId: tempId,
       content: content,
-      sender:
-      chat_user_model.ChatUserModel.fromProfileUser(_currentUserProfile),
+      sender: chat_user_model.ChatUserModel.fromProfileUser(
+        _currentUserProfile,
+      ),
       conversationId: conversationId,
       attachments: [],
       status: MessageStatus.SENT,
@@ -304,7 +352,10 @@ class ChatProvider with ChangeNotifier {
     }
 
     _messagesByConversation[conversationId]!.add(optimisticMessage);
-    _updateConversationListWithMessage(optimisticMessage, isNewUnreadMessage: false);
+    _updateConversationListWithMessage(
+      optimisticMessage,
+      isNewUnreadMessage: false,
+    );
     notifyListeners();
 
     try {
@@ -316,34 +367,48 @@ class ChatProvider with ChangeNotifier {
 
       if (!mounted) return null;
 
-      final index = _messagesByConversation[conversationId]
-          ?.indexWhere((m) => m.tempId == tempId);
+      final index = _messagesByConversation[conversationId]?.indexWhere(
+        (m) => m.tempId == tempId,
+      );
       if (index != null && index != -1) {
         _messagesByConversation[conversationId]![index] = sentMessageFromServer;
       } else {
-        _messagesByConversation[conversationId]?.removeWhere((m) => m.id == -1 && m.content == content && m.sender.id == _currentUserId);
-        final serverMsgIndex = _messagesByConversation[conversationId]?.indexWhere((m)=> m.id == sentMessageFromServer.id);
-        if(serverMsgIndex == null || serverMsgIndex == -1){
+        _messagesByConversation[conversationId]?.removeWhere(
+          (m) =>
+              m.id == -1 &&
+              m.content == content &&
+              m.sender.id == _currentUserId,
+        );
+        final serverMsgIndex = _messagesByConversation[conversationId]
+            ?.indexWhere((m) => m.id == sentMessageFromServer.id);
+        if (serverMsgIndex == null || serverMsgIndex == -1) {
           _messagesByConversation[conversationId]?.add(sentMessageFromServer);
         } else {
-          _messagesByConversation[conversationId]![serverMsgIndex] = sentMessageFromServer;
+          _messagesByConversation[conversationId]![serverMsgIndex] =
+              sentMessageFromServer;
         }
       }
 
-      _messagesByConversation[conversationId]
-          ?.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-      _updateConversationListWithMessage(sentMessageFromServer, isNewUnreadMessage: false);
+      _messagesByConversation[conversationId]?.sort(
+        (a, b) => a.createdAt.compareTo(b.createdAt),
+      );
+      _updateConversationListWithMessage(
+        sentMessageFromServer,
+        isNewUnreadMessage: false,
+      );
       notifyListeners();
       return sentMessageFromServer;
     } catch (e) {
       debugPrint('Error sending message via HTTP: $e');
       if (!mounted) return null;
-      final index = _messagesByConversation[conversationId]
-          ?.indexWhere((m) => m.tempId == tempId);
+      final index = _messagesByConversation[conversationId]?.indexWhere(
+        (m) => m.tempId == tempId,
+      );
       if (index != null && index != -1) {
         _messagesByConversation[conversationId]![index] =
-            _messagesByConversation[conversationId]![index]
-                .copyWith(status: MessageStatus.FAILED);
+            _messagesByConversation[conversationId]![index].copyWith(
+              status: MessageStatus.FAILED,
+            );
       }
       notifyListeners();
       return null;
@@ -362,10 +427,14 @@ class ChatProvider with ChangeNotifier {
         mimeType = imageXFile.mimeType;
         if (mimeType == null || !mimeType.startsWith('image/')) {
           mimeType = 'image/jpeg';
-          debugPrint("Could not determine valid image MIME type for ${imageXFile.name}, falling back to $mimeType");
+          debugPrint(
+            "Could not determine valid image MIME type for ${imageXFile.name}, falling back to $mimeType",
+          );
         }
       }
-      debugPrint("Uploading ${imageXFile.name} with determined MIME type: $mimeType");
+      debugPrint(
+        "Uploading ${imageXFile.name} with determined MIME type: $mimeType",
+      );
 
       try {
         final response = await apiService.uploadFile(
@@ -378,7 +447,8 @@ class ChatProvider with ChangeNotifier {
           uploadedFileIds.add(response['id'] as int);
         } else {
           debugPrint(
-              'Failed to upload image: ${imageXFile.name} - Server error: ${response['message']}');
+            'Failed to upload image: ${imageXFile.name} - Server error: ${response['message']}',
+          );
         }
       } catch (e) {
         debugPrint('Error uploading image ${imageXFile.name}: $e');
@@ -388,14 +458,19 @@ class ChatProvider with ChangeNotifier {
   }
 
   Future<ConversationModel?> createOrGetConversationWithUser(
-      int participantId) async {
+    int participantId,
+  ) async {
     if (participantId.toString() == _currentUserId) return null;
     _isLoadingConversations = true;
     notifyListeners();
     try {
       final conversation = await _chatHttpService.createOrGetConversation(
-          participantId, _currentUserId);
-      final existingConvIndex = _conversations.indexWhere((c) => c.id == conversation.id);
+        participantId,
+        _currentUserId,
+      );
+      final existingConvIndex = _conversations.indexWhere(
+        (c) => c.id == conversation.id,
+      );
       if (existingConvIndex == -1) {
         _conversations.insert(0, conversation);
       } else {
@@ -419,7 +494,9 @@ class ChatProvider with ChangeNotifier {
   }
 
   void leaveConversation(int conversationId) {
-    _socketService.emit('leaveConversation', {'conversationId': conversationId});
+    _socketService.emit('leaveConversation', {
+      'conversationId': conversationId,
+    });
     if (_activeConversationId == conversationId) {
       setActiveConversationId(null);
     }
@@ -445,7 +522,8 @@ class ChatProvider with ChangeNotifier {
       if (_messagesByConversation.containsKey(conversationId)) {
         final List<ChatMessageModel> updatedLocalMessages = [];
         for (var msg in _messagesByConversation[conversationId]!) {
-          if (msg.sender.id != _currentUserId && msg.status != MessageStatus.READ) {
+          if (msg.sender.id != _currentUserId &&
+              msg.status != MessageStatus.READ) {
             updatedLocalMessages.add(msg.copyWith(status: MessageStatus.READ));
             changedInMessages = true;
           } else {
@@ -457,8 +535,9 @@ class ChatProvider with ChangeNotifier {
         }
       }
 
-      final convIndex =
-      _conversations.indexWhere((c) => c.id == conversationId);
+      final convIndex = _conversations.indexWhere(
+        (c) => c.id == conversationId,
+      );
       bool changedInConversationList = false;
       if (convIndex != -1) {
         if (_conversations[convIndex].unreadCount > 0) {
@@ -466,7 +545,7 @@ class ChatProvider with ChangeNotifier {
           changedInConversationList = true;
         }
         if (_conversations[convIndex].lastMessage?.sender.id !=
-            _currentUserId &&
+                _currentUserId &&
             _conversations[convIndex].lastMessage?.status !=
                 MessageStatus.READ) {
           _conversations[convIndex].lastMessage = _conversations[convIndex]
@@ -481,7 +560,8 @@ class ChatProvider with ChangeNotifier {
       }
     } catch (e) {
       debugPrint(
-          "Error marking messages as read in provider for $conversationId: $e");
+        "Error marking messages as read in provider for $conversationId: $e",
+      );
     }
   }
 
@@ -491,8 +571,11 @@ class ChatProvider with ChangeNotifier {
 
   bool get mounted => true;
 
+  get currentUserId => null;
+
   @override
   void dispose() {
+    _disposed = true;
     _socketService.off('newMessage', _handleNewMessage);
     _socketService.off('messageStatusUpdated', _handleMessageStatusUpdate);
     _socketService.off('userTyping', _handleUserTyping);
@@ -505,5 +588,6 @@ class ChatProvider with ChangeNotifier {
 class TypingUserModel {
   final String id;
   final String name;
+
   TypingUserModel({required this.id, required this.name});
 }
