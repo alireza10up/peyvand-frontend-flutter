@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
       ],
       theme: ThemeData(
         useMaterial3: true,
-        fontFamily: 'PrimaryFont',
+        fontFamily: 'Vazir',
         colorScheme: ColorScheme.fromSeed(seedColor: AppTheme.primaryColor),
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(
